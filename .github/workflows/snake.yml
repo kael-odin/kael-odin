@@ -18,8 +18,11 @@ jobs:
         uses: Platane/snk/svg-only@v3
         with:
           github_user_name: ${{ github.repository_owner }}
+          # color_dots runs level 0 -> 4. Level 0 is deliberately lifted off the
+          # card background, otherwise the empty cells vanish and the grid
+          # reads as a blank box.
           outputs: |
-            dist/snake-dark.svg?color_snake=#00FFE5&color_dots=#0b1220,#0b3d4d,#0e6b7a,#12a8b8,#00FFE5
+            dist/snake-dark.svg?color_snake=#00FFE5&color_dots=#101d33,#0b3d4d,#0e6b7a,#12a8b8,#00FFE5
             dist/snake-light.svg?color_snake=#009E8E&color_dots=#ebedf0,#c9efe9,#8ddccf,#4cc4b3,#009E8E
 
       - name: Publish to the output branch
