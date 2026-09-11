@@ -273,13 +273,27 @@ def terminal(t: dict) -> str:
             f'<text x="{x}" y="{y}" font-size="14.5" fill="{colour}" '
             f'letter-spacing="0.2">{text.replace("&", "&amp;").replace("<", "&lt;")}</text>'
         )
+        out.append("</g>")
+
+        # The star count is right-aligned, well outside the line's wipe rect,
+        # so it needs its own clip — otherwise the typing animation eats it.
         if text in ("awesome-academic-research-skills", "openworker", "kv-streaming-2080ti-22G"):
+            sx, sw = w - 34, 90
+            sid = f"star{i}"
             out.append(
-                f'<text x="{w - 34}" y="{y}" font-size="14" fill="{t["amber"]}" '
+                f'<clipPath id="{sid}" clipPathUnits="userSpaceOnUse">'
+                f'<rect x="{sx - sw}" y="{y - 19}" width="{sw}" height="26" '
+                f'style="transform-origin:{sx - sw}px 0;'
+                f'animation:type 0.18s steps(8,end) {delay + 0.16:.2f}s both"/>'
+                f"</clipPath>"
+            )
+            out.append(f'<g clip-path="url(#{sid})">')
+            out.append(
+                f'<text x="{sx}" y="{y}" font-size="14" fill="{t["amber"]}" '
                 f'text-anchor="end">★ {stars[star_row]}</text>'
             )
+            out.append("</g>")
             star_row += 1
-        out.append("</g>")
         y += 30 if is_cmd else 26
 
     # Prompt with a blinking block cursor
