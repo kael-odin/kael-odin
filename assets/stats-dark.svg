@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="860" height="214" viewBox="0 0 860 214" role="img">
+  <style>
+    text { font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace; }
+    /* .val intentionally sets no fill: a CSS fill would beat the per-tile
+       fill="" presentation attribute in the cascade and flatten every accent. */
+    .val { font-size: 32px; font-weight: 700; }
+    .lbl { font-size: 10.5px; font-weight: 600; fill: #7a8ba3; letter-spacing: 2.2px; }
+    .ttl { font-size: 12px; font-weight: 600; fill: #7a8ba3; letter-spacing: 3px; }
+    .foot { font-size: 9.5px; fill: #3c4a63; letter-spacing: 1px; }
+    .sweep { animation: sweep 9s linear infinite; }
+    .blink { animation: blink 2.4s ease-in-out infinite; }
+    @keyframes sweep {
+      0%   { transform: translateX(-260px); }
+      100% { transform: translateX(860px); }
+    }
+    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: .25; } }
+  </style>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#05070d"/>
+      <stop offset="100%" stop-color="#0b1220"/>
+    </linearGradient>
+    <linearGradient id="scan" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#00ffe5" stop-opacity="0"/>
+      <stop offset="50%" stop-color="#00ffe5" stop-opacity=".55"/>
+      <stop offset="100%" stop-color="#00ffe5" stop-opacity="0"/>
+    </linearGradient>
+    <clipPath id="card"><rect x="0" y="0" width="860" height="214" rx="14"/></clipPath>
+  </defs>
+  <g clip-path="url(#card)">
+    <rect width="860" height="214" fill="url(#bg)"/>
+  </g>
+  <rect x="0.5" y="0.5" width="859" height="213" rx="13.5" fill="none" stroke="#16223a" stroke-width="1"/>
+  <rect class="sweep" y="0" width="260" height="1.5" fill="url(#scan)"/>
+
+  <defs>
+    <filter id="glow" x="-40%" y="-40%" width="180%" height="180%" color-interpolation-filters="sRGB">
+      <feGaussianBlur stdDeviation="2.6" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs><circle class="blink" cx="30" cy="29" r="3.5" fill="#00ffe5"/><circle cx="30" cy="29" r="7" fill="none" stroke="#00ffe5" stroke-opacity=".35"/><text class="ttl" x="46" y="33">// STATS</text><text class="foot" x="836" y="33" text-anchor="end">updated 2026-09-11 06:52 UTC</text><rect x="24.0" y="52" width="261.3" height="68" rx="10" fill="#00ffe5" fill-opacity="0.045" stroke="#16223a" stroke-width="1"/><rect x="36.0" y="66" width="3" height="40" rx="1.5" fill="#00ffe5"/><text class="val" x="50.0" y="90" fill="#00ffe5" filter="url(#glow)">118</text><text class="lbl" x="50.0" y="109">STARS</text><rect x="299.3" y="52" width="261.3" height="68" rx="10" fill="#ff2e97" fill-opacity="0.045" stroke="#16223a" stroke-width="1"/><rect x="311.3" y="66" width="3" height="40" rx="1.5" fill="#ff2e97"/><text class="val" x="325.3" y="90" fill="#ff2e97" filter="url(#glow)">14</text><text class="lbl" x="325.3" y="109">REPOS</text><rect x="574.7" y="52" width="261.3" height="68" rx="10" fill="#7b2ff7" fill-opacity="0.045" stroke="#16223a" stroke-width="1"/><rect x="586.7" y="66" width="3" height="40" rx="1.5" fill="#7b2ff7"/><text class="val" x="600.7" y="90" fill="#7b2ff7" filter="url(#glow)">5</text><text class="lbl" x="600.7" y="109">FOLLOWERS</text><rect x="24.0" y="132" width="261.3" height="68" rx="10" fill="#22d3ee" fill-opacity="0.045" stroke="#16223a" stroke-width="1"/><rect x="36.0" y="146" width="3" height="40" rx="1.5" fill="#22d3ee"/><text class="val" x="50.0" y="170" fill="#22d3ee" filter="url(#glow)">1,153</text><text class="lbl" x="50.0" y="189">CONTRIBUTIONS / 12MO</text><rect x="299.3" y="132" width="261.3" height="68" rx="10" fill="#ffb020" fill-opacity="0.045" stroke="#16223a" stroke-width="1"/><rect x="311.3" y="146" width="3" height="40" rx="1.5" fill="#ffb020"/><text class="val" x="325.3" y="170" fill="#ffb020" filter="url(#glow)">33</text><text class="lbl" x="325.3" y="189">PULL REQUESTS</text><rect x="574.7" y="132" width="261.3" height="68" rx="10" fill="#36f097" fill-opacity="0.045" stroke="#16223a" stroke-width="1"/><rect x="586.7" y="146" width="3" height="40" rx="1.5" fill="#36f097"/><text class="val" x="600.7" y="170" fill="#36f097" filter="url(#glow)">2</text><text class="lbl" x="600.7" y="189">ISSUES</text></svg>

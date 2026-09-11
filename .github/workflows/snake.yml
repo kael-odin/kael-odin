@@ -1,0 +1,31 @@
+name: "! Contribution snake"
+
+on:
+  schedule:
+    - cron: "17 */12 * * *"
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate the snake, neon palette
+        uses: Platane/snk/svg-only@v3
+        with:
+          github_user_name: ${{ github.repository_owner }}
+          outputs: |
+            dist/snake-dark.svg?color_snake=#00FFE5&color_dots=#0b1220,#0b3d4d,#0e6b7a,#12a8b8,#00FFE5
+            dist/snake-light.svg?color_snake=#009E8E&color_dots=#ebedf0,#c9efe9,#8ddccf,#4cc4b3,#009E8E
+
+      - name: Publish to the output branch
+        uses: crazy-max/ghaction-github-pages@v4
+        with:
+          target_branch: output
+          build_dir: dist
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

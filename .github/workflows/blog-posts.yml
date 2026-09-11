@@ -1,0 +1,30 @@
+name: "! Latest blog posts"
+
+on:
+  schedule:
+    - cron: "53 4 * * *"
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/blog-posts.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Rewrite the BLOG-POST-LIST block
+        uses: gautamkrishnar/blog-post-workflow@master
+        with:
+          feed_list: "https://kael-odin-blog.vercel.app/rss.xml"
+          max_post_count: 5
+          comment_tag_name: "BLOG-POST-LIST"
+          readme_path: "./README.md"
+          template: "- [$title]($url) · $date"
+          date_format: "yyyy-mm-dd"
+          commit_message: "chore(blog): refresh latest posts"

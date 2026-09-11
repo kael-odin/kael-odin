@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="156" viewBox="0 0 1280 156" role="img">
+<style>
+  text { font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace; }
+  .mono { font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace; }
+  .pulse { animation: pulse 4.5s linear infinite; }
+  .blink { animation: blink 1.15s steps(1,end) infinite; }
+  .breathe { animation: breathe 5s ease-in-out infinite; }
+  @keyframes pulse { from { transform: translateX(0); } to { transform: translateX(1540px); } }
+  @keyframes blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
+  @keyframes breathe { 0%, 100% { opacity: .45; } 50% { opacity: 1; } }
+  
+</style>
+<defs><linearGradient id="wordGrad" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#009e8e"/><stop offset="50%" stop-color="#6236c9"/><stop offset="100%" stop-color="#d4247a"/></linearGradient><linearGradient id="pulseGrad" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#d4247a" stop-opacity="0"/><stop offset="50%" stop-color="#d4247a" stop-opacity="1"/><stop offset="100%" stop-color="#d4247a" stop-opacity="0"/></linearGradient></defs>
+<pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse"><path d="M 48 0 L 0 0 0 48" fill="none" stroke="#dce6f5" stroke-width="1"/></pattern><rect x="-48" y="-48" width="1376" height="252" fill="url(#grid)" opacity="0.45"><animateTransform attributeName="transform" type="translate" from="0 0" to="0 48" dur="7s" repeatCount="indefinite"/></rect><line x1="0" y1="8" x2="1280" y2="8" stroke="#d9e2f0" stroke-width="1"/><text x="640.0" y="72" font-size="30" font-weight="700" letter-spacing="14" fill="url(#wordGrad)" text-anchor="middle">KAEL ODIN</text><text x="640.0" y="102" font-size="12" fill="#5a6b85" letter-spacing="4.6" text-anchor="middle">TURNING IDEAS INTO REPOSITORIES</text><line x1="0" y1="132" x2="1280" y2="132" stroke="#d9e2f0" stroke-width="1"/><rect class="pulse" x="-260" y="130.5" width="260" height="3" rx="1.5" fill="url(#pulseGrad)"/></svg>

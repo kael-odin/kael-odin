@@ -1,0 +1,43 @@
+name: "! Stats cards"
+
+on:
+  schedule:
+    - cron: "41 2 * * *"
+  workflow_dispatch:
+  push:
+    branches: [main]
+    # Only re-run when the generator itself changes. Without a path filter the
+    # job's own commit would re-trigger it forever.
+    paths:
+      - "scripts/generate_stats.py"
+      - ".github/workflows/stats.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Render stat + language cards
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python scripts/generate_stats.py --out assets
+
+      - name: Commit
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets
+          if git diff --staged --quiet; then
+            echo "stats unchanged"
+          else
+            git commit -m "chore(stats): refresh stat cards"
+            git push
+          fi
