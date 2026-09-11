@@ -19,7 +19,12 @@
 </p>
 
 <p align="center">
-  <img src="https://komarev.com/ghpvc/?username=kael-odin&style=for-the-badge&color=00ffe5&label=PROFILE+VIEWS" alt="PROFILE VIEWS">
+  <!-- 访问计数：hits.sh 支持 labelColor，能和右边两枚徽章的深色标签对齐。
+       komarev 的计数文字被硬编码成白色，任何浅色 color= 都会让数字几乎看不见
+       （比如 color=00ffe5 在 #00ffe5 底上对比度只有 1.17:1），所以用 7B2FF7/FF2E97 这类深色。
+       View counter: hits.sh honours labelColor so this row stays consistent.
+       komarev hardcodes white text, so a light color= makes the number unreadable. -->
+  <img src="https://hits.sh/github.com/kael-odin.svg?style=for-the-badge&label=PROFILE+VIEWS&color=7B2FF7&labelColor=0b1220" alt="PROFILE VIEWS">
   <img src="https://img.shields.io/github/followers/kael-odin?style=for-the-badge&color=FF2E97&labelColor=0b1220&logo=github" alt="FOLLOWERS">
   <img src="https://img.shields.io/github/stars/kael-odin?style=for-the-badge&color=FFB020&labelColor=0b1220&logo=github" alt="STARS">
 </p>
