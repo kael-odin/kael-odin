@@ -1,0 +1,8 @@
+# Keep the repo byte-identical across Windows checkout and the Linux runners.
+# Without this, autocrlf would rewrite the YAML, JSON and SVG assets on checkout.
+* text=auto eol=lf
+*.svg text eol=lf
+*.yml text eol=lf
+*.md  text eol=lf
+*.py  text eol=lf
+*.json text eol=lf
