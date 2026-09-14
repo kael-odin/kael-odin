@@ -118,11 +118,7 @@ I build backend services and data pipelines by day, and spend my nights on local
 ## <samp>06 · 最近写的 / WRITING</samp>
 
 <!-- BLOG-POST-LIST:START -->
-- [做一个 Live2D](https://www.yysuni.com/blog/live2d-note) · 2026-02-28
-- [新年观察](https://www.yysuni.com/blog/watch-bloggers) · 2026-02-25
-- [3D 场景搭建笔记](https://www.yysuni.com/blog/3d-scene-note) · 2026-02-06
-- [3D 与 Blender 笔记](https://www.yysuni.com/blog/3d-blender-note) · 2026-02-05
-- [模型动画笔记](https://www.yysuni.com/blog/model-animation-note) · 2026-02-03<!-- BLOG-POST-LIST:END -->
+- [2025 Blog 的使用引导](https://kael-odin-blog.vercel.app/blog/readme) · 2025-11-16<!-- BLOG-POST-LIST:END -->
 
 <p align="center">
   <a href="https://kael-odin-blog.vercel.app/"><img src="https://img.shields.io/badge/阅读更多-READ_THE_BLOG-00FFE5?style=for-the-badge&logo=rss&logoColor=black&labelColor=0b1220" alt="read the blog"></a>
