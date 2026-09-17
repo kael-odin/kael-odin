@@ -24,6 +24,11 @@ THEMES = {
         "border": "#16223a", "ink": "#e6f1ff", "muted": "#7a8ba3", "dim": "#3c4a63",
         "grid": "#12233d", "rule": "#16223a",
         "c1": "#00ffe5", "c2": "#7b2ff7", "c3": "#ff2e97", "amber": "#ffb020",
+        "hero": {
+            "bg0": "#070b0a", "bg1": "#121a17", "ink": "#eee8dc",
+            "soft": "#91a097", "jade": "#72b7a6", "cinnabar": "#d45d43",
+            "frame": "#46534d", "land": "#31483f", "seal_ink": "#f8eee0",
+        },
         "glow": True,
     },
     "light": {
@@ -32,6 +37,11 @@ THEMES = {
         "border": "#d9e2f0", "ink": "#0b1020", "muted": "#5a6b85", "dim": "#9aa8bf",
         "grid": "#dce6f5", "rule": "#d9e2f0",
         "c1": "#009e8e", "c2": "#6236c9", "c3": "#d4247a", "amber": "#b57300",
+        "hero": {
+            "bg0": "#f6f1e7", "bg1": "#e9e1d2", "ink": "#1d2823",
+            "soft": "#617068", "jade": "#2f7e70", "cinnabar": "#b84b35",
+            "frame": "#a9a194", "land": "#9cad9f", "seal_ink": "#fff8ea",
+        },
         "glow": False,
     },
 }
@@ -112,94 +122,110 @@ def status(w: int, h: int, t: dict, label: str = "ONLINE", left: str = "// PROFI
 
 def hero(t: dict) -> str:
     w, h = WIDE, 350
-    name = "KAEL ODIN"
+    c = t["hero"]
     defs = (
-        f'<linearGradient id="nameGrad" x1="0" y1="0" x2="1" y2="0">'
-        f'<stop offset="0%" stop-color="{t["c1"]}"/>'
-        f'<stop offset="48%" stop-color="{t["c2"]}"/>'
-        f'<stop offset="100%" stop-color="{t["c3"]}"/></linearGradient>'
-        f'<linearGradient id="shimmer" x1="0" y1="0" x2="1" y2="0">'
-        f'<stop offset="0%" stop-color="#ffffff" stop-opacity="0"/>'
-        f'<stop offset="50%" stop-color="#ffffff" stop-opacity=".85"/>'
-        f'<stop offset="100%" stop-color="#ffffff" stop-opacity="0"/></linearGradient>'
-        f'<linearGradient id="scanGrad" x1="0" y1="0" x2="0" y2="1">'
-        f'<stop offset="0%" stop-color="{t["c1"]}" stop-opacity="0"/>'
-        f'<stop offset="50%" stop-color="{t["c1"]}" stop-opacity=".13"/>'
-        f'<stop offset="100%" stop-color="{t["c1"]}" stop-opacity="0"/></linearGradient>'
-        f'<linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">'
-        f'<stop offset="0%" stop-color="{t["bg0"]}"/>'
-        f'<stop offset="100%" stop-color="{t["bg1"]}"/></linearGradient>'
-        f'<linearGradient id="ruleGrad" x1="0" y1="0" x2="1" y2="0">'
-        f'<stop offset="0%" stop-color="{t["c1"]}"/>'
-        f'<stop offset="100%" stop-color="{t["c1"]}" stop-opacity="0"/></linearGradient>'
-        f'<clipPath id="nameClip"><text x="56" y="196" font-size="104" font-weight="800" '
-        f'letter-spacing="9">{name}</text></clipPath>'
-        f'<radialGradient id="halo"><stop offset="0%" stop-color="{t["c2"]}" stop-opacity=".38"/>'
-        f'<stop offset="100%" stop-color="{t["c2"]}" stop-opacity="0"/></radialGradient>'
+        f'<linearGradient id="paper" x1="0" y1="0" x2="1" y2="1">'
+        f'<stop stop-color="{c["bg0"]}"/>'
+        f'<stop offset="100%" stop-color="{c["bg1"]}"/></linearGradient>'
+        f'<radialGradient id="clearing">'
+        f'<stop offset="20%" stop-color="{c["bg0"]}" stop-opacity=".96"/>'
+        f'<stop offset="100%" stop-color="{c["bg0"]}" stop-opacity="0"/></radialGradient>'
+        f'<pattern id="fibers" width="31" height="29" patternUnits="userSpaceOnUse">'
+        f'<circle cx="3" cy="7" r=".65" fill="{c["soft"]}" opacity=".25"/>'
+        f'<circle cx="21" cy="23" r=".45" fill="{c["soft"]}" opacity=".2"/>'
+        f'</pattern>'
+        f'<clipPath id="field"><rect x="38" y="38" width="1204" height="274"/></clipPath>'
     )
-    if t["glow"]:
-        defs += glow_filter(t, 5.0)
+    css = """
+      .display { font-family: Georgia, Cambria, 'Times New Roman', serif; }
+      .han { font-family: SimSun, 'Noto Serif CJK SC', serif; }
+      .signal { stroke-dasharray: 22 1200; animation: follow-ridge 14s linear infinite; }
+      @keyframes follow-ridge { to { stroke-dashoffset: -1222; } }
+      @media (prefers-reduced-motion: reduce) { .signal { animation: none; opacity: 0; } }
+    """
+    out = [head(w, h, t, defs, css.strip())]
+    out.append('<title>Kael Odin — engineering in ink</title>')
+    out.append('<desc>Centered name over ink-wash mountains traced like a circuit, in a light or dark palette.</desc>')
+    out.append(f'<rect width="{w}" height="{h}" fill="url(#paper)"/>')
+    out.append(f'<rect width="{w}" height="{h}" fill="url(#fibers)"/>')
 
-    out = [head(w, h, t, defs)]
-    out.append(f'<rect width="{w}" height="{h}" fill="url(#bg)"/>')
-    out.append(grid_rect(w, h, t, opacity=0.5 if t["glow"] else 0.7))
-    out.append(f'<ellipse cx="360" cy="180" rx="420" ry="170" fill="url(#halo)"/>')
-
-    if t["glow"]:  # vertical scan sweep, dark theme only
+    # A single landscape is both the Song-painting gesture and the circuit diagram.
+    left = (
+        'M -18 257 C 48 255 67 213 117 218 S 181 155 227 167 S 275 208 321 166 S 379 124 449 134',
+        'M -18 279 C 53 274 80 235 126 240 S 186 176 236 192 S 289 226 335 186 S 389 147 451 157',
+        'M -18 301 C 60 292 88 256 139 264 S 200 199 248 216 S 307 244 346 208 S 409 169 465 181',
+        'M -18 325 C 60 309 97 278 147 287 S 214 223 264 240 S 318 264 361 232 S 418 192 470 205',
+    )
+    right = (
+        'M 831 145 C 897 126 920 188 972 178 S 1036 130 1082 151 S 1139 226 1190 213 S 1251 246 1298 238',
+        'M 825 169 C 886 150 923 211 977 200 S 1048 156 1091 174 S 1144 249 1194 236 S 1259 267 1298 262',
+        'M 817 193 C 876 172 931 232 984 221 S 1051 178 1103 198 S 1147 272 1200 258 S 1262 289 1298 283',
+        'M 809 215 C 870 197 936 255 995 245 S 1065 205 1114 223 S 1161 293 1209 281 S 1270 311 1298 305',
+    )
+    out.append('<g clip-path="url(#field)" fill="none">')
+    for i, path in enumerate(left + right):
         out.append(
-            f'<rect x="0" y="-140" width="{w}" height="140" fill="url(#scanGrad)">'
-            f'<animate attributeName="y" from="-140" to="350" dur="8s" repeatCount="indefinite"/>'
-            f"</rect>"
+            f'<path d="{path}" stroke="{c["land"]}" stroke-width="{1.5 if i in (0, 4) else 1}" '
+            f'opacity="{.84 - (i % 4) * .12:.2f}"/>'
         )
-
-    out.append(brackets(w, h, t))
-    out.append(status(w, h, t))
-
-    # Name: glow pass, gradient pass, then a light sweep clipped to the glyphs.
-    name_attrs = f'x="56" y="196" font-size="104" font-weight="800" letter-spacing="9"'
-    if t["glow"]:
+    for x, y in ((88, 189), (161, 149), (359, 137), (936, 150), (1069, 115), (1183, 184)):
         out.append(
-            f'<text {name_attrs} fill="{t["c1"]}" filter="url(#glow)" opacity=".55">{name}</text>'
+            f'<circle cx="{x}" cy="{y}" r="2.2" fill="{c["jade"]}" opacity=".6"/>'
         )
-    out.append(f'<text {name_attrs} fill="url(#nameGrad)">{name}</text>')
     out.append(
-        f'<g clip-path="url(#nameClip)"><rect x="-300" y="60" width="300" height="180" '
-        f'fill="url(#shimmer)">'
-        f'<animate attributeName="x" from="-300" to="{w + 60}" dur="5.5s" '
-        f'begin="1s" repeatCount="indefinite"/></rect></g>'
+        f'<path class="signal" d="{right[0]}" stroke="{c["jade"]}" '
+        f'stroke-width="2.6" stroke-linecap="round" opacity=".95"/>'
     )
-
-    # Accent rule with a travelling pulse
-    out.append(f'<rect x="56" y="228" width="600" height="2" fill="url(#ruleGrad)" opacity=".85"/>')
-    out.append(
-        f'<rect class="pulse" x="-260" y="226.5" width="260" height="5" rx="2.5" '
-        f'fill="url(#shimmer)" opacity=".9"/>'
-    )
+    out.append('</g>')
+    out.append(f'<ellipse cx="640" cy="181" rx="397" ry="166" fill="url(#clearing)"/>')
 
     out.append(
-        f'<text x="56" y="266" font-size="19" fill="{t["muted"]}" letter-spacing="3.4">'
-        f"Full-stack &amp; systems engineering &#183; open source &#183; turning ideas into repositories"
-        f"</text>"
+        f'<path d="M 39 81 V 39 H 81 M 1199 39 H 1241 V 81 M 39 269 V 311 H 81 '
+        f'M 1199 311 H 1241 V 269" fill="none" stroke="{c["frame"]}" stroke-width="1.2"/>'
+    )
+    out.append(
+        f'<text x="70" y="66" font-size="15" fill="{c["soft"]}" '
+        f'letter-spacing=".3">~/kael-odin</text>'
+    )
+    out.append(
+        f'<text x="1210" y="66" font-size="15" fill="{c["soft"]}" '
+        f'text-anchor="end">git branch: main</text>'
     )
 
-    # Tag pills
-    tags = ["LOCAL LLM", "AGENT TOOLING", "DATA PIPELINE", "I18N", "OPEN SOURCE"]
-    x, y, ph = 56, 292, 34
-    for i, tag in enumerate(tags):
-        accent = [t["c1"], t["c3"], t["c2"], t["c1"], t["c3"]][i % 5]
-        pw = len(tag) * 9.2 + 30
-        out.append(
-            f'<rect x="{x:.0f}" y="{y}" width="{pw:.0f}" height="{ph}" rx="{ph / 2:.0f}" '
-            f'fill="{accent}" fill-opacity=".08" stroke="{accent}" stroke-opacity=".55" stroke-width="1"/>'
-        )
-        out.append(
-            f'<text x="{x + pw / 2:.0f}" y="{y + 22}" font-size="12.5" font-weight="600" '
-            f'fill="{accent}" letter-spacing="1.5" text-anchor="middle">{tag}</text>'
-        )
-        x += pw + 12
-
-    out.append("</svg>\n")
-    return "".join(out)
+    out.append(
+        f'<path d="M 461 103 H 543 M 737 103 H 819" stroke="{c["frame"]}" stroke-width="1"/>'
+    )
+    out.append(
+        f'<text x="640" y="108" text-anchor="middle" font-size="16" '
+        f'letter-spacing="1.1" fill="{c["jade"]}">$ whoami</text>'
+    )
+    out.append(
+        f'<text x="640" y="190" text-anchor="middle" class="display" '
+        f'font-size="98" font-weight="700" letter-spacing="3" '
+        f'fill="{c["ink"]}">KAEL ODIN</text>'
+    )
+    out.append(
+        f'<rect x="993" y="120" width="39" height="39" rx="2" '
+        f'fill="{c["cinnabar"]}" transform="rotate(7 1012.5 139.5)"/>'
+    )
+    out.append(
+        f'<text x="1012.5" y="148" text-anchor="middle" font-size="24" class="han" '
+        f'font-weight="700" fill="{c["seal_ink"]}">造</text>'
+    )
+    out.append(
+        f'<text x="640" y="240" text-anchor="middle" font-size="23" class="han" '
+        f'fill="{c["ink"]}">把复杂的问题，做成简单可用的工具</text>'
+    )
+    out.append(
+        f'<text x="640" y="272" text-anchor="middle" font-size="16" '
+        f'fill="{c["soft"]}">Systems engineering / local models / tools that ship</text>'
+    )
+    out.append(
+        f'<path d="M 590 290 H 630 M 650 290 H 690" stroke="{c["frame"]}" stroke-width="1"/>'
+        f'<circle cx="640" cy="290" r="2.5" fill="{c["cinnabar"]}"/>'
+    )
+    out.append('</svg>\n')
+    return ''.join(out)
 
 
 # ---------------------------------------------------------------------------
