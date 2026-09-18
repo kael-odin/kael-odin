@@ -12,6 +12,7 @@ Run:  python scripts/build_assets.py [--out assets]
 from __future__ import annotations
 
 import argparse
+import math
 import os
 
 WIDE = 1280
@@ -24,11 +25,6 @@ THEMES = {
         "border": "#16223a", "ink": "#e6f1ff", "muted": "#7a8ba3", "dim": "#3c4a63",
         "grid": "#12233d", "rule": "#16223a",
         "c1": "#00ffe5", "c2": "#7b2ff7", "c3": "#ff2e97", "amber": "#ffb020",
-        "hero": {
-            "bg0": "#070b0a", "bg1": "#121a17", "ink": "#eee8dc",
-            "soft": "#91a097", "jade": "#72b7a6", "cinnabar": "#d45d43",
-            "frame": "#46534d", "land": "#31483f", "seal_ink": "#f8eee0",
-        },
         "glow": True,
     },
     "light": {
@@ -37,11 +33,6 @@ THEMES = {
         "border": "#d9e2f0", "ink": "#0b1020", "muted": "#5a6b85", "dim": "#9aa8bf",
         "grid": "#dce6f5", "rule": "#d9e2f0",
         "c1": "#009e8e", "c2": "#6236c9", "c3": "#d4247a", "amber": "#b57300",
-        "hero": {
-            "bg0": "#f6f1e7", "bg1": "#e9e1d2", "ink": "#1d2823",
-            "soft": "#617068", "jade": "#2f7e70", "cinnabar": "#b84b35",
-            "frame": "#a9a194", "land": "#9cad9f", "seal_ink": "#fff8ea",
-        },
         "glow": False,
     },
 }
@@ -121,111 +112,271 @@ def status(w: int, h: int, t: dict, label: str = "ONLINE", left: str = "// PROFI
 
 
 def hero(t: dict) -> str:
-    w, h = WIDE, 350
-    c = t["hero"]
+    """Mission-control hero: glitch-draw wordmark over a synthwave grid floor,
+    telemetry ring and HUD readouts — same palette and type as every other
+    asset on the page. Pure declarative SVG (CSS/SMIL, no scripts), safe to
+    serve from raw.githubusercontent inside <img>/<picture>."""
+    w, h = WIDE, 420
+    dark = t["glow"]
+    go = ".5" if dark else ".26"          # resting RGB-fringe opacity
+    burst = ".9" if dark else ".55"       # glitch burst peak opacity
+    aur1 = ".15" if dark else ".09"       # purple aurora wash
+    aur2 = ".11" if dark else ".07"       # cyan aurora wash
+    ray_o = ".22" if dark else ".30"
+    ring_cx, ring_cy = 1128.0, 190.0
+
+    circ66 = 2 * math.pi * 66
+    trace = "M 350 250 H 556 L 568 242 H 712 L 724 250 H 930"
+    glow_attr = ' filter="url(#glow)"' if dark else ""
+
+    ticks = " ".join(
+        f"M {ring_cx + 74 * math.cos(math.radians(k * 30)):.1f} "
+        f"{ring_cy + 74 * math.sin(math.radians(k * 30)):.1f} L "
+        f"{ring_cx + 80 * math.cos(math.radians(k * 30)):.1f} "
+        f"{ring_cy + 80 * math.sin(math.radians(k * 30)):.1f}"
+        for k in range(12)
+    )
+    hex_out = " ".join(
+        f"{ring_cx + 32 * math.cos(math.radians(-90 + 60 * k)):.1f},"
+        f"{ring_cy + 32 * math.sin(math.radians(-90 + 60 * k)):.1f}"
+        for k in range(6)
+    )
+    hex_in = " ".join(
+        f"{ring_cx + 24 * math.cos(math.radians(-90 + 60 * k)):.1f},"
+        f"{ring_cy + 24 * math.sin(math.radians(-90 + 60 * k)):.1f}"
+        for k in range(6)
+    )
+
     defs = (
-        f'<linearGradient id="paper" x1="0" y1="0" x2="1" y2="1">'
-        f'<stop stop-color="{c["bg0"]}"/>'
-        f'<stop offset="100%" stop-color="{c["bg1"]}"/></linearGradient>'
-        f'<radialGradient id="clearing">'
-        f'<stop offset="20%" stop-color="{c["bg0"]}" stop-opacity=".96"/>'
-        f'<stop offset="100%" stop-color="{c["bg0"]}" stop-opacity="0"/></radialGradient>'
-        f'<pattern id="fibers" width="31" height="29" patternUnits="userSpaceOnUse">'
-        f'<circle cx="3" cy="7" r=".65" fill="{c["soft"]}" opacity=".25"/>'
-        f'<circle cx="21" cy="23" r=".45" fill="{c["soft"]}" opacity=".2"/>'
-        f'</pattern>'
-        f'<clipPath id="field"><rect x="38" y="38" width="1204" height="274"/></clipPath>'
+        f'<linearGradient id="bgG" x1="0" y1="0" x2="0" y2="1">'
+        f'<stop stop-color="{t["bg0"]}"/><stop offset="100%" stop-color="{t["bg1"]}"/></linearGradient>'
+        f'<radialGradient id="aur1"><stop stop-color="{t["c2"]}" stop-opacity=".9"/>'
+        f'<stop offset="100%" stop-color="{t["c2"]}" stop-opacity="0"/></radialGradient>'
+        f'<radialGradient id="aur2"><stop stop-color="{t["c1"]}" stop-opacity=".9"/>'
+        f'<stop offset="100%" stop-color="{t["c1"]}" stop-opacity="0"/></radialGradient>'
+        f'<radialGradient id="clear"><stop stop-color="{t["bg0"]}" stop-opacity=".6"/>'
+        f'<stop offset="100%" stop-color="{t["bg0"]}" stop-opacity="0"/></radialGradient>'
+        f'<linearGradient id="nameGrad" x1="0" y1="0" x2="1" y2="0">'
+        f'<stop stop-color="{t["c1"]}"/><stop offset=".52" stop-color="{t["c2"]}"/>'
+        f'<stop offset="100%" stop-color="{t["c3"]}"/></linearGradient>'
+        f'<linearGradient id="scanG" x1="0" y1="0" x2="0" y2="1">'
+        f'<stop stop-color="{t["c1"]}" stop-opacity="0"/>'
+        f'<stop offset=".5" stop-color="{t["c1"]}" stop-opacity=".12"/>'
+        f'<stop offset="100%" stop-color="{t["c1"]}" stop-opacity="0"/></linearGradient>'
+        f'<linearGradient id="hzG" x1="0" y1="0" x2="0" y2="1">'
+        f'<stop stop-color="{t["c1"]}" stop-opacity=".38"/>'
+        f'<stop offset="100%" stop-color="{t["c1"]}" stop-opacity="0"/></linearGradient>'
+        f'<clipPath id="floorClip"><rect x="0" y="352" width="{w}" height="{h - 352}"/></clipPath>'
     )
-    css = """
-      .display { font-family: Georgia, Cambria, 'Times New Roman', serif; }
-      .han { font-family: SimSun, 'Noto Serif CJK SC', serif; }
-      .signal { stroke-dasharray: 22 1200; animation: follow-ridge 14s linear infinite; }
-      @keyframes follow-ridge { to { stroke-dashoffset: -1222; } }
-      @media (prefers-reduced-motion: reduce) { .signal { animation: none; opacity: 0; } }
+    if dark:
+        defs += glow_filter(t, 3.2)
+
+    css = f"""
+      .han {{ font-family: 'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', sans-serif; }}
+      .gl-a {{ animation: glz-a 7.3s steps(1,end) infinite; }}
+      .gl-b {{ animation: glz-b 7.3s steps(1,end) infinite; }}
+      @keyframes glz-a {{ 0%,90.9% {{ transform: translate(0,0); opacity: {go}; }}
+        91.4% {{ transform: translate(-8px,3px); opacity: {burst}; }}
+        92.6% {{ transform: translate(6px,-2px); opacity: .55; }}
+        93.8% {{ transform: translate(-4px,1px); opacity: {burst}; }}
+        94.6%,100% {{ transform: translate(0,0); opacity: {go}; }} }}
+      @keyframes glz-b {{ 0%,44.9% {{ transform: translate(0,0); opacity: {go}; }}
+        45.4% {{ transform: translate(7px,-3px); opacity: {burst}; }}
+        46.6% {{ transform: translate(-5px,2px); opacity: .5; }}
+        47.8% {{ transform: translate(3px,-1px); opacity: {burst}; }}
+        48.6%,100% {{ transform: translate(0,0); opacity: {go}; }} }}
+      .name-line {{ animation: nDraw 1.7s cubic-bezier(.25,.6,.2,1) .15s backwards; }}
+      @keyframes nDraw {{ from {{ stroke-dashoffset: 660; }} }}
+      .trace {{ animation: tDraw 1.1s cubic-bezier(.3,.7,.2,1) 2.15s backwards; }}
+      @keyframes tDraw {{ from {{ stroke-dashoffset: 600; }} }}
+      .cdot {{ offset-path: path('{trace}'); offset-rotate: 0deg;
+               animation: cdot 5.6s cubic-bezier(.45,.05,.55,.95) 3.2s infinite; }}
+      @keyframes cdot {{ 0% {{ offset-distance: 0%; opacity: 0; }} 10% {{ opacity: 1; }}
+        88% {{ opacity: 1; }} 100% {{ offset-distance: 100%; opacity: 0; }} }}
+      .orb-a {{ animation: spin 46s linear infinite; }}
+      .orb-b {{ animation: spinR 30s linear infinite; }}
+      @keyframes spin {{ to {{ transform: rotate(360deg); }} }}
+      @keyframes spinR {{ to {{ transform: rotate(-360deg); }} }}
+      .arc {{ animation: arcSweep 7s linear infinite; }}
+      @keyframes arcSweep {{ to {{ stroke-dashoffset: -{circ66:.1f}; }} }}
+      .ray {{ animation: rayFlow 5.5s linear infinite; }}
+      @keyframes rayFlow {{ to {{ stroke-dashoffset: -130; }} }}
+      .tw {{ animation: twinkle 4.6s ease-in-out infinite; }}
+      @keyframes twinkle {{ 0%,100% {{ opacity: .5; }} 50% {{ opacity: .06; }} }}
+      .scan {{ animation: scanMove 9s linear infinite 2.6s backwards; }}
+      @keyframes scanMove {{ from {{ transform: translateY(0); }} to {{ transform: translateY(580px); }} }}
+      .drift-a {{ animation: drift 19s ease-in-out infinite alternate; }}
+      .drift-b {{ animation: drift 24s ease-in-out infinite alternate-reverse; }}
+      @keyframes drift {{ from {{ transform: translate(0,0); }} to {{ transform: translate(26px,14px); }} }}
+      @media (prefers-reduced-motion: reduce) {{ * {{ animation: none !important; }} }}
     """
+
     out = [head(w, h, t, defs, css.strip())]
-    out.append('<title>Kael Odin — engineering in ink</title>')
-    out.append('<desc>Centered name over ink-wash mountains traced like a circuit, in a light or dark palette.</desc>')
-    out.append(f'<rect width="{w}" height="{h}" fill="url(#paper)"/>')
-    out.append(f'<rect width="{w}" height="{h}" fill="url(#fibers)"/>')
+    out.append("<title>Kael Odin — mission control</title>")
+    out.append(
+        "<desc>Neon HUD hero: the name KAEL ODIN assembles over a synthwave grid floor "
+        "with a telemetry ring, signal trace and scanline sweep, in a light or dark palette.</desc>"
+    )
+    out.append(f'<rect width="{w}" height="{h}" fill="url(#bgG)"/>')
 
-    # A single landscape is both the Song-painting gesture and the circuit diagram.
-    left = (
-        'M -18 257 C 48 255 67 213 117 218 S 181 155 227 167 S 275 208 321 166 S 379 124 449 134',
-        'M -18 279 C 53 274 80 235 126 240 S 186 176 236 192 S 289 226 335 186 S 389 147 451 157',
-        'M -18 301 C 60 292 88 256 139 264 S 200 199 248 216 S 307 244 346 208 S 409 169 465 181',
-        'M -18 325 C 60 309 97 278 147 287 S 214 223 264 240 S 318 264 361 232 S 418 192 470 205',
-    )
-    right = (
-        'M 831 145 C 897 126 920 188 972 178 S 1036 130 1082 151 S 1139 226 1190 213 S 1251 246 1298 238',
-        'M 825 169 C 886 150 923 211 977 200 S 1048 156 1091 174 S 1144 249 1194 236 S 1259 267 1298 262',
-        'M 817 193 C 876 172 931 232 984 221 S 1051 178 1103 198 S 1147 272 1200 258 S 1262 289 1298 283',
-        'M 809 215 C 870 197 936 255 995 245 S 1065 205 1114 223 S 1161 293 1209 281 S 1270 311 1298 305',
-    )
-    out.append('<g clip-path="url(#field)" fill="none">')
-    for i, path in enumerate(left + right):
+    # Ambient depth: aurora washes drifting on their own periods.
+    out.append(f'<g opacity="{aur1}" class="drift-a"><ellipse cx="240" cy="70" rx="430" ry="240" fill="url(#aur1)"/></g>')
+    out.append(f'<g opacity="{aur2}" class="drift-b"><ellipse cx="1050" cy="360" rx="470" ry="250" fill="url(#aur2)"/></g>')
+
+    # Fine grid — the same cell size the footer uses.
+    out.append(grid_rect(w, h, t, cell=64, opacity=0.55 if dark else 0.6, scroll=False))
+
+    stars = [
+        (61, 84, 1.1, .35, 0), (142, 61, .9, .3, 0), (214, 102, 1.3, 1, 0),
+        (305, 58, .8, .3, 0), (388, 88, 1.0, .3, 0), (502, 64, 1.2, 1, 2.1),
+        (612, 52, .9, .3, 0), (706, 74, 1.1, .3, 0), (818, 58, 1.3, 1, 3.0),
+        (902, 96, .9, .3, 0), (985, 60, 1.1, .3, 0), (1078, 86, 1.2, 1, .8),
+        (1196, 72, .9, .3, 0), (95, 168, 1.0, .3, 0), (1210, 150, 1.1, 1, 2.8),
+        (74, 262, 1.0, .3, 0), (1216, 258, 1.2, .3, 0), (132, 338, 1.1, 1, 1.7),
+        (286, 318, .9, .3, 0), (994, 320, 1.0, .3, 0), (1122, 342, 1.2, 1, 3.6),
+        (452, 342, .9, .3, 0), (768, 334, 1.0, .3, 0), (640, 44, 1.1, .3, 0),
+    ]
+    for x, y, r, op, delay in stars:
+        if delay:
+            out.append(
+                f'<circle class="tw" style="animation-delay:{delay}s" cx="{x}" cy="{y}" '
+                f'r="{r}" fill="{t["c1"]}"/>'
+            )
+        else:
+            out.append(f'<circle cx="{x}" cy="{y}" r="{r}" fill="{t["ink"]}" opacity="{op}"/>')
+
+    # Keep the centre readable over the grid.
+    out.append('<ellipse cx="640" cy="225" rx="440" ry="195" fill="url(#clear)"/>')
+
+    # Synthwave floor: static horizontals + rays with energy flowing outward.
+    out.append('<g clip-path="url(#floorClip)" fill="none">')
+    for y, op in ((358, .16), (366, .22), (377, .3), (392, .4), (410, .5)):
+        out.append(f'<line x1="0" y1="{y}" x2="{w}" y2="{y}" stroke="{t["grid"]}" stroke-width="1" stroke-opacity="{op}"/>')
+    for i in range(-4, 5):
         out.append(
-            f'<path d="{path}" stroke="{c["land"]}" stroke-width="{1.5 if i in (0, 4) else 1}" '
-            f'opacity="{.84 - (i % 4) * .12:.2f}"/>'
+            f'<path class="ray" style="animation-delay:{-i * .45:.2f}s" d="M 640 352 L {640 + i * 190} 436" '
+            f'stroke="{t["c1"]}" stroke-width="1" stroke-opacity="{ray_o}" stroke-dasharray="4 9"/>'
         )
-    for x, y in ((88, 189), (161, 149), (359, 137), (936, 150), (1069, 115), (1183, 184)):
+    out.append("</g>")
+    out.append(f'<rect x="0" y="346" width="{w}" height="12" fill="url(#hzG)"/>')
+    out.append(
+        f'<line x1="0" y1="352" x2="{w}" y2="352" stroke="{t["c1"]}" stroke-width="1.3" '
+        f'stroke-opacity=".5"{glow_attr}/>'
+    )
+
+    # Left flank: telemetry rows with meters that fill in.
+    for j, (label, val, p, accent) in enumerate(
+        (("LOCAL LLM", "22G VRAM", .86, t["c1"]),
+         ("AGENT OPS", "TOOLING", .62, t["c2"]),
+         ("I18N MIRRORS", "ZH-CN", .74, t["c3"]))
+    ):
+        ry = 172 + j * 44
+        out.append(f'<text x="64" y="{ry - 8}" font-size="12" fill="{t["dim"]}" letter-spacing="2">{label}</text>')
+        out.append(f'<text x="214" y="{ry - 8}" font-size="12" fill="{t["muted"]}" text-anchor="end">{val}</text>')
+        out.append(f'<rect x="64" y="{ry}" width="150" height="3" rx="1.5" fill="{t["border"]}"/>')
         out.append(
-            f'<circle cx="{x}" cy="{y}" r="2.2" fill="{c["jade"]}" opacity=".6"/>'
+            f'<rect x="64" y="{ry}" width="{150 * p:.0f}" height="3" rx="1.5" fill="{accent}"/>'
         )
+
+    # Right flank: telemetry ring around the 造 core.
+    out.append('<g class="orb-a" style="transform-origin:%.0fpx %.0fpx">' % (ring_cx, ring_cy))
     out.append(
-        f'<path class="signal" d="{right[0]}" stroke="{c["jade"]}" '
-        f'stroke-width="2.6" stroke-linecap="round" opacity=".95"/>'
+        f'<circle cx="{ring_cx}" cy="{ring_cy}" r="84" fill="none" stroke="{t["muted"]}" '
+        f'stroke-opacity=".45" stroke-width="1" stroke-dasharray="2 7"/>'
     )
-    out.append('</g>')
-    out.append(f'<ellipse cx="640" cy="181" rx="397" ry="166" fill="url(#clearing)"/>')
+    for dx, dy in ((0, -84), (84, 0), (0, 84), (-84, 0)):
+        out.append(
+            f'<rect x="{ring_cx + dx - 3:.0f}" y="{ring_cy + dy - 3:.0f}" width="6" height="6" '
+            f'fill="{t["c1"]}" opacity=".7"/>'
+        )
+    out.append("</g>")
+    out.append(f'<path d="{ticks}" stroke="{t["dim"]}" stroke-width="1.2" fill="none" opacity=".8"/>')
+    arc_end_x = ring_cx + 66 * math.sin(math.radians(120))
+    arc_end_y = ring_cy - 66 * math.cos(math.radians(120))
+    out.append(
+        f'<path class="arc" d="M {ring_cx:.0f} {ring_cy - 66:.0f} A 66 66 0 0 1 {arc_end_x:.1f} {arc_end_y:.1f}" '
+        f'fill="none" stroke="{t["c3"]}" stroke-width="2" stroke-linecap="round" '
+        f'stroke-dasharray="{circ66 / 3:.1f} {2 * circ66 / 3:.1f}"/>'
+    )
+    out.append('<g class="orb-b" style="transform-origin:%.0fpx %.0fpx">' % (ring_cx, ring_cy))
+    out.append(
+        f'<circle cx="{ring_cx}" cy="{ring_cy}" r="56" fill="none" stroke="{t["c1"]}" '
+        f'stroke-opacity=".55" stroke-width="1.4" stroke-dasharray="34 14"/>'
+    )
+    out.append("</g>")
+    out.append(
+        f'<polygon points="{hex_out}" fill="{t["panel"]}" fill-opacity=".94" '
+        f'stroke="{t["c1"]}" stroke-width="1.5"{glow_attr}/>'
+    )
+    out.append(
+        f'<polygon class="breathe" points="{hex_in}" fill="none" stroke="{t["border"]}" '
+        f'stroke-width="1" stroke-dasharray="3 4"/>'
+    )
+    out.append(
+        f'<text x="{ring_cx:.0f}" y="{ring_cy + 9:.0f}" text-anchor="middle" class="han" '
+        f'font-size="26" font-weight="700" fill="{t["ink"]}">造</text>'
+    )
+    out.append(
+        f'<text x="{ring_cx:.0f}" y="296" text-anchor="middle" font-size="12" fill="{t["muted"]}" '
+        f'letter-spacing="2.4">SYS.CORE // ONLINE</text>'
+    )
+
+    # Top HUD row.
+    out.append(f'<text x="64" y="56" font-size="15" fill="{t["muted"]}" letter-spacing=".3">~/kael-odin · main</text>')
+    out.append(f'<circle cx="1062" cy="51.5" r="3.5" fill="{t["c1"]}" class="blink"/>')
+    out.append(
+        f'<text x="{w - 56}" y="56" text-anchor="end" font-size="12.5" fill="{t["c1"]}" '
+        f'letter-spacing="3">SYSTEMS ONLINE</text>'
+    )
+
+    # Kicker: shell prompt with a blinking block cursor.
+    out.append(f'<path d="M 520 113 H 594 M 686 113 H 760" stroke="{t["rule"]}" stroke-width="1"/>')
+    out.append(
+        f'<text x="640" y="118" text-anchor="middle" font-size="16" letter-spacing="1.2" '
+        f'fill="{t["c1"]}">$ whoami</text>'
+    )
+    out.append(f'<rect x="690" y="104" width="9" height="17" fill="{t["c1"]}" class="blink"/>')
+
+    # The wordmark: RGB-fringed ghosts plus a permanent gradient fill; the
+    # outline traces itself around the finished letters like a plasma rim.
+    # Motion only ever ADDS — the resting state must be the complete artwork,
+    # because static renderers (social cards, scrapers) never run the clock.
+    name_attrs = 'x="640" y="224" text-anchor="middle" font-size="96" font-weight="700" letter-spacing="6"'
+    out.append(f'<g transform="translate(-2.5 0)"><text class="gl-a" {name_attrs} fill="{t["c3"]}" opacity="{go}">KAEL ODIN</text></g>')
+    out.append(f'<g transform="translate(2.5 0)"><text class="gl-b" {name_attrs} fill="{t["c1"]}" opacity="{go}">KAEL ODIN</text></g>')
+    out.append(
+        f'<text class="name-line" {name_attrs} fill="none" stroke="{t["c1"]}" stroke-width="1.3" '
+        f'opacity=".6" stroke-dasharray="660 660">KAEL ODIN</text>'
+    )
+    out.append(
+        f'<text {name_attrs} fill="url(#nameGrad)"{glow_attr}>KAEL ODIN</text>'
+    )
+
+    # Signal trace under the name: draws itself, then a pulse keeps commuting.
+    out.append(f'<path d="{trace}" fill="none" stroke="{t["rule"]}" stroke-width="1.2"/>')
+    out.append(
+        f'<path class="trace" d="{trace}" fill="none" stroke="{t["c1"]}" stroke-width="2" '
+        f'stroke-linecap="round" stroke-dasharray="600 600"/>'
+    )
+    for nx in (350, 930):
+        out.append(f'<circle cx="{nx}" cy="250" r="3" fill="{t["c1"]}"/>')
+    out.append(f'<circle class="cdot" cx="350" cy="250" r="3.5" fill="{t["c1"]}"/>')
 
     out.append(
-        f'<path d="M 39 81 V 39 H 81 M 1199 39 H 1241 V 81 M 39 269 V 311 H 81 '
-        f'M 1199 311 H 1241 V 269" fill="none" stroke="{c["frame"]}" stroke-width="1.2"/>'
+        f'<text x="640" y="296" text-anchor="middle" class="han" '
+        f'font-size="23" fill="{t["ink"]}">把复杂的问题，做成简单可用的工具</text>'
     )
     out.append(
-        f'<text x="70" y="66" font-size="15" fill="{c["soft"]}" '
-        f'letter-spacing=".3">~/kael-odin</text>'
-    )
-    out.append(
-        f'<text x="1210" y="66" font-size="15" fill="{c["soft"]}" '
-        f'text-anchor="end">git branch: main</text>'
+        f'<text x="640" y="324" text-anchor="middle" '
+        f'font-size="13" fill="{t["muted"]}" letter-spacing="3">SYSTEMS ENGINEERING · LOCAL MODELS · AGENT TOOLING · I18N</text>'
     )
 
-    out.append(
-        f'<path d="M 461 103 H 543 M 737 103 H 819" stroke="{c["frame"]}" stroke-width="1"/>'
-    )
-    out.append(
-        f'<text x="640" y="108" text-anchor="middle" font-size="16" '
-        f'letter-spacing="1.1" fill="{c["jade"]}">$ whoami</text>'
-    )
-    out.append(
-        f'<text x="640" y="190" text-anchor="middle" class="display" '
-        f'font-size="98" font-weight="700" letter-spacing="3" '
-        f'fill="{c["ink"]}">KAEL ODIN</text>'
-    )
-    out.append(
-        f'<rect x="993" y="120" width="39" height="39" rx="2" '
-        f'fill="{c["cinnabar"]}" transform="rotate(7 1012.5 139.5)"/>'
-    )
-    out.append(
-        f'<text x="1012.5" y="148" text-anchor="middle" font-size="24" class="han" '
-        f'font-weight="700" fill="{c["seal_ink"]}">造</text>'
-    )
-    out.append(
-        f'<text x="640" y="240" text-anchor="middle" font-size="23" class="han" '
-        f'fill="{c["ink"]}">把复杂的问题，做成简单可用的工具</text>'
-    )
-    out.append(
-        f'<text x="640" y="272" text-anchor="middle" font-size="16" '
-        f'fill="{c["soft"]}">Systems engineering / local models / tools that ship</text>'
-    )
-    out.append(
-        f'<path d="M 590 290 H 630 M 650 290 H 690" stroke="{c["frame"]}" stroke-width="1"/>'
-        f'<circle cx="640" cy="290" r="2.5" fill="{c["cinnabar"]}"/>'
-    )
-    out.append('</svg>\n')
-    return ''.join(out)
+    # CRT scanline sweep parked off-canvas at rest.
+    out.append('<g class="scan"><rect x="-40" y="-130" width="1360" height="90" fill="url(#scanG)"/></g>')
+
+    out.append(brackets(w, h, t))
+    out.append("</svg>\n")
+    return "".join(out)
 
 
 # ---------------------------------------------------------------------------
