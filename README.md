@@ -12,7 +12,7 @@
 
 <p align="center">
   <a href="https://github.com/kael-odin"><img src="https://img.shields.io/badge/GitHub-kael--odin-181717?style=for-the-badge&logo=github&logoColor=white" alt="GitHub"></a>
-  <a href="https://kael-odin-blog.vercel.app/"><img src="https://img.shields.io/badge/Blog-kael--odin--blog-00FFE5?style=for-the-badge&logo=vercel&logoColor=black" alt="Blog"></a>
+  <a href="https://odin-saga.vercel.app/"><img src="https://img.shields.io/badge/Blog-kael--odin--blog-00FFE5?style=for-the-badge&logo=vercel&logoColor=black" alt="Blog"></a>
   <!-- 想加更多社交徽章，复制上面一行改掉即可：
        知乎 0084FF / 掘金 1E80FF / X 000000 / 邮箱 EA4335 / Bilibili FB7299
        Add more social badges here — swap the label, colour and link. -->
@@ -56,7 +56,7 @@ I build backend services and data pipelines by day, and spend my nights on local
 - 🔭 **最近在做 / Building** — 本地大模型推理优化（`RTX 2080 Ti 22G` + KV streaming）、中文本地化镜像
 - 🧠 **感兴趣 / Into** — 逆向协议、Agent 编排、量化与显存调度
 - 💬 **可以聊 / Ask me about** — 本地部署、爬虫与结构化、把英文项目汉化成能用的中文版
-- 📫 **找我 / Reach me** — [博客](https://kael-odin-blog.vercel.app/) · [Issues](https://github.com/kael-odin/kael-odin/issues)
+- 📫 **找我 / Reach me** — [博客](https://odin-saga.vercel.app/) · [Issues](https://github.com/kael-odin/kael-odin/issues)
 
 ## <samp>02 · 技术栈 / STACK</samp>
 
@@ -118,10 +118,10 @@ I build backend services and data pipelines by day, and spend my nights on local
 ## <samp>06 · 最近写的 / WRITING</samp>
 
 <!-- BLOG-POST-LIST:START -->
-- [2025 Blog 的使用引导](https://kael-odin-blog.vercel.app/blog/readme) · 2025-11-16<!-- BLOG-POST-LIST:END -->
+- [2025 Blog 的使用引导](https://odin-saga.vercel.app/blog/readme) · 2025-11-16<!-- BLOG-POST-LIST:END -->
 
 <p align="center">
-  <a href="https://kael-odin-blog.vercel.app/"><img src="https://img.shields.io/badge/阅读更多-READ_THE_BLOG-00FFE5?style=for-the-badge&logo=rss&logoColor=black&labelColor=0b1220" alt="read the blog"></a>
+  <a href="https://odin-saga.vercel.app/"><img src="https://img.shields.io/badge/阅读更多-READ_THE_BLOG-00FFE5?style=for-the-badge&logo=rss&logoColor=black&labelColor=0b1220" alt="read the blog"></a>
 </p>
 
 <p align="center">
