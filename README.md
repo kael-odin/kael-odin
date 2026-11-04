@@ -1,157 +1,186 @@
 <p align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/kael-odin/kael-odin/main/assets/hero-dark.svg">
-    <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/kael-odin/kael-odin/main/assets/hero-light.svg">
-    <img src="https://raw.githubusercontent.com/kael-odin/kael-odin/main/assets/hero-dark.svg" alt="Kael Odin" width="100%">
+    <source media="(max-width: 600px) and (prefers-color-scheme: light)" srcset="./assets/hero-light-mobile.svg">
+    <source media="(max-width: 600px)" srcset="./assets/hero-dark-mobile.svg">
+    <source media="(prefers-reduced-motion: reduce) and (prefers-color-scheme: light)" srcset="./assets/hero-light.svg">
+    <source media="(prefers-reduced-motion: reduce)" srcset="./assets/hero-dark.svg">
+    <source media="(prefers-color-scheme: light)" srcset="./assets/readme/hero-light.gif">
+    <img src="./assets/readme/hero-dark.gif" width="100%" alt="Kael Odin — full-stack and systems engineer. Local inference, agent systems and Chinese localization. 把想法变成仓库。">
   </picture>
 </p>
 
 <p align="center">
-  <a href="https://git.io/typing-svg"><img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=600&size=21&duration=2600&pause=700&color=00FFE5&center=true&vCenter=true&width=760&height=60&lines=%E5%85%A8%E6%A0%88%20%C2%B7%20%E7%B3%BB%E7%BB%9F%E5%B7%A5%E7%A8%8B%E5%B8%88%20%C2%B7%20%E6%8A%8A%E6%83%B3%E6%B3%95%E5%8F%98%E6%88%90%E4%BB%93%E5%BA%93%3BFull-stack%20%C2%B7%20systems%20%C2%B7%20turning%20ideas%20into%20repositories%3B%E6%9C%AC%E5%9C%B0%E5%A4%A7%E6%A8%A1%E5%9E%8B%E6%8E%A8%E7%90%86%20%C2%B7%20Agent%20%E5%B7%A5%E5%85%B7%E9%93%BE%20%C2%B7%20%E4%B8%AD%E6%96%87%E6%9C%AC%E5%9C%B0%E5%8C%96%3BLocal%20LLM%20inference%20%C2%B7%20agent%20tooling%20%C2%B7%20i18n%20mirrors" alt="全栈 · 系统工程师 · 把想法变成仓库"></a>
+  <a href="https://odin-saga.vercel.app/"><b>Blog ↗</b></a> &nbsp; / &nbsp;
+  <a href="https://github.com/kael-odin?tab=repositories"><b>Repositories ↗</b></a> &nbsp; / &nbsp;
+  <a href="https://github.com/kael-odin/kael-odin/issues"><b>Say hello ↗</b></a>
 </p>
-
-<p align="center">
-  <a href="https://github.com/kael-odin"><img src="https://img.shields.io/badge/GitHub-kael--odin-181717?style=for-the-badge&logo=github&logoColor=white" alt="GitHub"></a>
-  <a href="https://odin-saga.vercel.app/"><img src="https://img.shields.io/badge/Blog-kael--odin--blog-00FFE5?style=for-the-badge&logo=vercel&logoColor=black" alt="Blog"></a>
-  <!-- 想加更多社交徽章，复制上面一行改掉即可：
-       知乎 0084FF / 掘金 1E80FF / X 000000 / 邮箱 EA4335 / Bilibili FB7299
-       Add more social badges here — swap the label, colour and link. -->
-</p>
-
-<p align="center">
-  <!-- 访问计数：hits.sh 支持 labelColor，能和右边两枚徽章的深色标签对齐。
-       komarev 的计数文字被硬编码成白色，任何浅色 color= 都会让数字几乎看不见
-       （比如 color=00ffe5 在 #00ffe5 底上对比度只有 1.17:1），所以用 7B2FF7/FF2E97 这类深色。
-       View counter: hits.sh honours labelColor so this row stays consistent.
-       komarev hardcodes white text, so a light color= makes the number unreadable. -->
-  <img src="https://hits.sh/github.com/kael-odin.svg?style=for-the-badge&label=PROFILE+VIEWS&color=7B2FF7&labelColor=0b1220" alt="PROFILE VIEWS">
-  <img src="https://img.shields.io/github/followers/kael-odin?style=for-the-badge&color=FF2E97&labelColor=0b1220&logo=github" alt="FOLLOWERS">
-  <img src="https://img.shields.io/github/stars/kael-odin?style=for-the-badge&color=FFB020&labelColor=0b1220&logo=github" alt="STARS">
-</p>
-
-<p align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/kael-odin/kael-odin/main/assets/divider-dark.svg">
-    <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/kael-odin/kael-odin/main/assets/divider-light.svg">
-    <img src="https://raw.githubusercontent.com/kael-odin/kael-odin/main/assets/divider-dark.svg" width="100%" alt="">
-  </picture>
-</p>
-
-## <samp>01 · 关于我 / ABOUT</samp>
-
-<p align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/kael-odin/kael-odin/main/assets/terminal-dark.svg">
-    <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/kael-odin/kael-odin/main/assets/terminal-light.svg">
-    <img src="https://raw.githubusercontent.com/kael-odin/kael-odin/main/assets/terminal-dark.svg" width="100%" alt="terminal">
-  </picture>
-</p>
-
-我是 **Kael Odin**，全栈 / 系统工程师，就职于 [@Thordata](https://github.com/Thordata)。
-白天写后端服务与数据管道，晚上折腾本地大模型推理和 Agent 工具链 —— 喜欢把一件麻烦事做成一键可用的东西，然后把过程写成仓库。
-
-I'm **Kael Odin**, a full-stack / systems engineer at [@Thordata](https://github.com/Thordata).
-I build backend services and data pipelines by day, and spend my nights on local LLM inference and agent tooling — I like taking something painful and turning it into a one-command tool, then shipping the process as a repo.
-
-- 🔭 **最近在做 / Building** — 本地大模型推理优化（`RTX 2080 Ti 22G` + KV streaming）、中文本地化镜像
-- 🧠 **感兴趣 / Into** — 逆向协议、Agent 编排、量化与显存调度
-- 💬 **可以聊 / Ask me about** — 本地部署、爬虫与结构化、把英文项目汉化成能用的中文版
-- 📫 **找我 / Reach me** — [博客](https://odin-saga.vercel.app/) · [Issues](https://github.com/kael-odin/kael-odin/issues)
-
-## <samp>02 · 技术栈 / STACK</samp>
-
-<p align="center">
-  <img src="https://skillicons.dev/icons?i=ts,js,python,go,cpp,c,vue,react,nodejs,html&perline=10" alt="stack">
-  <img src="https://skillicons.dev/icons?i=docker,linux,nginx,git,github,redis,mysql,mongodb,postgres,vite&perline=10" alt="stack">
-  <img src="https://skillicons.dev/icons?i=bash,vscode,vercel,cloudflare,grafana,fastapi,flask,latex,markdown,regex&perline=10" alt="stack">
-</p>
-
-<p align="center">
-  <img src="https://raw.githubusercontent.com/kael-odin/kael-odin/main/assets/focus-dark.svg" width="100%" alt="focus areas">
-</p>
-
-## <samp>03 · 精选项目 / FEATURED</samp>
-
-| 项目 / Project | 简介 / What it does | |
-| :-- | :-- | :-- |
-| **[awesome-academic-research-skills](https://github.com/kael-odin/awesome-academic-research-skills)** | 面向中文用户的学术论文与科研 Agent Skill 每日排行榜 —— 自动搜索、过滤并排名 GitHub 上的 Claude Code / Codex 科研 Skill 仓库<br>*Daily-ranked leaderboard of academic-research agent skills* | ![stars](https://img.shields.io/github/stars/kael-odin/awesome-academic-research-skills?style=flat-square&color=00FFE5&labelColor=0b1220&label=stars) ![lang](https://img.shields.io/github/languages/top/kael-odin/awesome-academic-research-skills?style=flat-square&color=7B2FF7&labelColor=0b1220) |
-| **[openworker](https://github.com/kael-odin/openworker)** | 中文汉化版维护 — 追平上游、全量汉化、自带模型 Key、本地优先，把日常任务真正做完的 AI<br>*Maintaining a fully-localised, upstream-tracked fork* | ![stars](https://img.shields.io/github/stars/kael-odin/openworker?style=flat-square&color=00FFE5&labelColor=0b1220&label=stars) ![lang](https://img.shields.io/github/languages/top/kael-odin/openworker?style=flat-square&color=7B2FF7&labelColor=0b1220) |
-| **[cursor-switch](https://github.com/kael-odin/cursor-switch)** | 无需订阅 Pro 即可在 Cursor 里用自选大模型 —— 保留真实账号市场 + 按模型成本统计<br>*Bring your own LLM key to Cursor, with per-model cost stats* | ![stars](https://img.shields.io/github/stars/kael-odin/cursor-switch?style=flat-square&color=00FFE5&labelColor=0b1220&label=stars) ![lang](https://img.shields.io/github/languages/top/kael-odin/cursor-switch?style=flat-square&color=7B2FF7&labelColor=0b1220) |
-| **[kv-streaming-2080ti-22G](https://github.com/kael-odin/kv-streaming-2080ti-22G)** | RTX 2080 Ti 22G 上的 llama.cpp 自适应 KV streaming 支持与基准测试（Qwen3.8 MTP + 视觉）<br>*Adaptive KV streaming + benchmarks on a 22 GB 2080 Ti* | ![stars](https://img.shields.io/github/stars/kael-odin/kv-streaming-2080ti-22G?style=flat-square&color=00FFE5&labelColor=0b1220&label=stars) ![lang](https://img.shields.io/github/languages/top/kael-odin/kv-streaming-2080ti-22G?style=flat-square&color=7B2FF7&labelColor=0b1220) |
-| **[Amadeus-Agent](https://github.com/kael-odin/Amadeus-Agent)** | 单文件 AI 智能体工作台：桌面 + 图标 + 窗口，每个图标 = 一个独立对话 Agent。零构建、双击即用，数据全在浏览器本地<br>*Single-file agent workbench — no build step, all data stays local* | ![lang](https://img.shields.io/github/languages/top/kael-odin/Amadeus-Agent?style=flat-square&color=7B2FF7&labelColor=0b1220) |
-| **[prompts-chat-zh](https://github.com/kael-odin/prompts-chat-zh)** | prompts.chat 的非官方简体中文镜像 —— 2205 条公开提示词全部译成中文，中英对照、全文搜索<br>*Unofficial Simplified-Chinese mirror of prompts.chat* | ![lang](https://img.shields.io/github/languages/top/kael-odin/prompts-chat-zh?style=flat-square&color=7B2FF7&labelColor=0b1220) |
-| **[odin-saga](https://github.com/kael-odin/odin-saga)** | 个人博客与技术笔记（Next.js + Markdown），技术 / 项目 / 随笔<br>*Personal blog and notes, Next.js + Markdown* | ![lang](https://img.shields.io/github/languages/top/kael-odin/odin-saga?style=flat-square&color=7B2FF7&labelColor=0b1220) |
-
-<p align="center">
-  <a href="https://github.com/kael-odin?tab=repositories"><img src="https://img.shields.io/badge/查看全部仓库-ALL_REPOSITORIES-FF2E97?style=for-the-badge&logo=github&logoColor=white&labelColor=0b1220" alt="all repositories"></a>
-</p>
-
-## <samp>04 · 数据面板 / METRICS</samp>
-
-<p align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/kael-odin/kael-odin/main/assets/stats-dark.svg">
-    <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/kael-odin/kael-odin/main/assets/stats-light.svg">
-    <img src="https://raw.githubusercontent.com/kael-odin/kael-odin/main/assets/stats-dark.svg" width="100%" alt="stats">
-  </picture>
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/kael-odin/kael-odin/main/assets/langs-dark.svg">
-    <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/kael-odin/kael-odin/main/assets/langs-light.svg">
-    <img src="https://raw.githubusercontent.com/kael-odin/kael-odin/main/assets/langs-dark.svg" width="100%" alt="languages">
-  </picture>
-</p>
-
-## <samp>05 · 贡献 / CONTRIBUTIONS</samp>
-
-<p align="center">
-  <img src="https://raw.githubusercontent.com/kael-odin/kael-odin/main/profile-3d-contrib/profile-night-rainbow.svg" width="100%" alt="3D contribution graph">
-</p>
-
-<p align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/kael-odin/kael-odin/output/snake-dark.svg">
-    <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/kael-odin/kael-odin/output/snake-light.svg">
-    <img src="https://raw.githubusercontent.com/kael-odin/kael-odin/output/snake-dark.svg" width="100%" alt="contribution snake">
-  </picture>
-</p>
-
-## <samp>06 · 最近写的 / WRITING</samp>
-
-<!-- BLOG-POST-LIST:START -->
-- [2025 Blog 的使用引导](https://odin-saga.vercel.app/blog/readme) · 2025-11-16<!-- BLOG-POST-LIST:END -->
-
-<p align="center">
-  <a href="https://odin-saga.vercel.app/"><img src="https://img.shields.io/badge/阅读更多-READ_THE_BLOG-00FFE5?style=for-the-badge&logo=rss&logoColor=black&labelColor=0b1220" alt="read the blog"></a>
-</p>
-
-<p align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/kael-odin/kael-odin/main/assets/footer-dark.svg">
-    <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/kael-odin/kael-odin/main/assets/footer-light.svg">
-    <img src="https://raw.githubusercontent.com/kael-odin/kael-odin/main/assets/footer-dark.svg" width="100%" alt="">
-  </picture>
-</p>
-
-<details>
-<summary><samp>关于这个页面 / How this page is built</samp></summary>
 
 <br>
 
-除了少数几枚实时徽章（shields.io / komarev 访客计数 / typing-svg），**页面上所有图形都是这个仓库自己生成的**，不存在第三方 widget 服务随时挂掉的问题：
+我是 **Kael Odin**，全栈 / 系统工程师，就职于 [Thordata](https://github.com/Thordata)。
 
-| 图形 | 来源 |
-| :-- | :-- |
-| `assets/hero-*.svg` `terminal-*.svg` `divider-*.svg` `focus-*.svg` `footer-*.svg` | [`scripts/build_assets.py`](scripts/build_assets.py) —— 纯手写 SVG，深浅双色 |
-| `assets/stats-*.svg` `langs-*.svg` | [`scripts/generate_stats.py`](scripts/generate_stats.py) —— 零依赖 Python，每天由 Action 重新拉到自己的数据后重绘 |
-| `profile-3d-contrib/*.svg` | `.github/workflows/3d-contrib.yml` |
-| `output/snake-*.svg` | `.github/workflows/snake.yml` |
-| 下面那个博客列表 | `.github/workflows/blog-posts.yml` |
+白天做后端服务和数据管道，业余折腾本地大模型、Agent 工具链与中文本地化。喜欢把麻烦事变成可以直接运行的工具，再把过程写进开源仓库。
 
-本地重新生成：
+*I build backend systems, explore local inference, and make useful tools more accessible.*
 
-```bash
-python scripts/build_assets.py --out assets
-GITHUB_TOKEN=$(gh auth token) python scripts/generate_stats.py --out assets
-```
+<br>
+
+## 01 &nbsp; Selected builds · 做过的一些东西
+
+<a href="https://github.com/kael-odin/awesome-academic-research-skills">
+  <picture>
+    <source media="(max-width: 600px) and (prefers-color-scheme: light)" srcset="./assets/readme/project-research-light-mobile.png">
+    <source media="(max-width: 600px)" srcset="./assets/readme/project-research-dark-mobile.png">
+    <source media="(prefers-color-scheme: light)" srcset="./assets/readme/project-research-light.png">
+    <img src="./assets/readme/project-research-dark.png" width="100%" alt="Academic Research Skills — 自动发现、过滤和排名科研 Agent Skill，面向中文用户的每日工具导航。右侧为真实网站截图。">
+  </picture>
+</a>
+
+[浏览科研 Skill 排行 ↗](https://kael-odin.github.io/awesome-academic-research-skills/) · [源码](https://github.com/kael-odin/awesome-academic-research-skills)
+
+<br>
+
+<a href="https://github.com/kael-odin/codex-plugins-zh">
+  <picture>
+    <source media="(max-width: 600px) and (prefers-color-scheme: light)" srcset="./assets/readme/project-plugins-light-mobile.png">
+    <source media="(max-width: 600px)" srcset="./assets/readme/project-plugins-dark-mobile.png">
+    <source media="(prefers-color-scheme: light)" srcset="./assets/readme/project-plugins-light.png">
+    <img src="./assets/readme/project-plugins-dark.png" width="100%" alt="Good tools. In Chinese. — 自动同步的中文插件市场与机器可证的无损汉化。右侧为 Codex 中文市场真实截图。">
+  </picture>
+</a>
+
+[Codex 插件中文市场 ↗](https://kael-odin.github.io/codex-plugins-zh/) · [Claude Code 插件中文市场 ↗](https://kael-odin.github.io/claude-plugins-zh/) · [ZCode ↗](https://kael-odin.github.io/zcode-plugins-zh/)
+
+<br>
+
+<a href="https://github.com/kael-odin/2080ti-22G-kvmem-qwen3.8-27B-256K-36.6toks">
+  <picture>
+    <source media="(max-width: 600px) and (prefers-color-scheme: light)" srcset="./assets/project-gpu-light-mobile.svg">
+    <source media="(max-width: 600px)" srcset="./assets/project-gpu-dark-mobile.svg">
+    <source media="(prefers-color-scheme: light)" srcset="./assets/project-gpu-light.svg">
+    <img src="./assets/project-gpu-dark.svg" width="100%" alt="Old silicon. New limits. — RTX 2080 Ti 22G 上的 KVMem 长上下文推理。项目记录 262K 上下文、36.6 tok/s；配置与复现条件以仓库为准。GPU 图为示意。">
+  </picture>
+</a>
+
+[查看推理配置、实测与复现链 ↗](https://github.com/kael-odin/2080ti-22G-kvmem-qwen3.8-27B-256K-36.6toks)
+
+<br>
+
+<a href="https://github.com/kael-odin/odin-bifrost">
+  <picture>
+    <source media="(max-width: 600px) and (prefers-color-scheme: light)" srcset="./assets/readme/project-bifrost-light-mobile.png">
+    <source media="(max-width: 600px)" srcset="./assets/readme/project-bifrost-dark-mobile.png">
+    <source media="(prefers-color-scheme: light)" srcset="./assets/readme/project-bifrost-light.png">
+    <img src="./assets/readme/project-bifrost-dark.png" width="100%" alt="The Odin Collection — 交互式主页、开发者作品集和数字花园。右侧为 Bifrost 已上线页面的真实截图。">
+  </picture>
+</a>
+
+[Bifrost ↗](https://kael-odin.github.io/odin-bifrost/) · [Valhalla ↗](https://kael-odin.github.io/odin-valhalla/) · [Runestone ↗](https://kael-odin.github.io/odin-runestone/) · [Heim ↗](https://kael-odin.github.io/odin-heim/) · [Saga ↗](https://odin-saga.vercel.app/)
+
+<details>
+<summary><b>More experiments · 还有这些</b></summary>
+
+<br>
+
+- **[Heimdall](https://github.com/kael-odin/heimdall)** — 网页镜像、站点图谱、可维护重建与还原度验证。
+- **[OpenWorker 中文版](https://github.com/kael-odin/openworker)** — 追踪上游、本地优先的中文任务型 AI；基于上游项目维护。
+- **[Amadeus Agent](https://github.com/kael-odin/Amadeus-Agent)** — 单文件智能体工作台，零构建、浏览器本地存储。
+- **[free-for-dev 中文版](https://github.com/kael-odin/free-for-dev-zh/)** — 免费开发者服务导航、增量翻译与大陆可用性标注。
+- **[prompts.chat 中文镜像](https://github.com/kael-odin/prompts-chat-zh)** — 提示词中英对照、全文搜索和自动更新。
+
+[全部仓库 →](https://github.com/kael-odin?tab=repositories)
+
+</details>
+
+<br>
+
+## 02 &nbsp; Areas of interest · 长期折腾的方向
+
+<picture>
+  <source media="(max-width: 600px) and (prefers-color-scheme: light)" srcset="./assets/focus-light-mobile.svg">
+  <source media="(max-width: 600px)" srcset="./assets/focus-dark-mobile.svg">
+  <source media="(prefers-color-scheme: light)" srcset="./assets/focus-light.svg">
+  <img src="./assets/focus-dark.svg" width="100%" alt="本地推理与显存优化 / Agent 系统与工具工作流 / 中文本地化 / 数据采集与结构化。">
+</picture>
+
+<br>
+
+## 03 &nbsp; Toolkit · 用来把东西做出来
+
+<picture>
+  <source media="(max-width: 600px) and (prefers-color-scheme: light)" srcset="./assets/toolkit-light-mobile.svg">
+  <source media="(max-width: 600px)" srcset="./assets/toolkit-dark-mobile.svg">
+  <source media="(prefers-color-scheme: light)" srcset="./assets/toolkit-light.svg">
+  <img src="./assets/toolkit-dark.svg" width="100%" alt="TypeScript, Python, Go, C++, JavaScript, Node.js, React, Vue, Vite, FastAPI, Docker, Linux, Git, Nginx, Redis, PostgreSQL, MySQL and Cloudflare。">
+</picture>
+
+<br>
+
+## 04 &nbsp; In the open · 公开构建记录
+
+<picture>
+  <source media="(max-width: 600px) and (prefers-color-scheme: light)" srcset="./assets/stats-light-mobile.svg">
+  <source media="(max-width: 600px)" srcset="./assets/stats-dark-mobile.svg">
+  <source media="(prefers-color-scheme: light)" srcset="./assets/stats-light.svg">
+  <img src="./assets/stats-dark.svg" width="100%" alt="GitHub 公开数据：仓库获星、公开仓库、关注者、最近十二个月贡献、Pull Requests 与 Issues。每天自动刷新，缺失数据不以零替代。">
+</picture>
+
+<br>
+
+<picture>
+  <source media="(max-width: 600px) and (prefers-color-scheme: light)" srcset="./assets/langs-light-mobile.svg">
+  <source media="(max-width: 600px)" srcset="./assets/langs-dark-mobile.svg">
+  <source media="(prefers-color-scheme: light)" srcset="./assets/langs-light.svg">
+  <img src="./assets/langs-dark.svg" width="100%" alt="公开仓库的语言字节分布，最多抽样 40 个最大的公开仓库；这是代码体量，不代表个人熟练度。其余语言明确合并为 Other。">
+</picture>
+
+<sub>自托管面板，由 GitHub Actions 更新。[原始公开数据快照](./assets/profile-data.json) · 语言统计口径为仓库代码字节，不是能力评分。</sub>
+
+<br>
+
+<picture>
+  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/kael-odin/kael-odin/output/snake-light.svg">
+  <img src="https://raw.githubusercontent.com/kael-odin/kael-odin/output/snake-dark.svg" width="100%" alt="从真实 GitHub 贡献日历生成的贡献蛇动画。">
+</picture>
+
+<details>
+<summary>Contribution landscape · 立体贡献图</summary>
+
+<br>
+
+<img src="./profile-3d-contrib/profile-night-rainbow.svg" width="100%" alt="GitHub 贡献日历的立体可视化，由定时任务生成。">
+
+</details>
+
+<br>
+
+## 05 &nbsp; Field notes · 最近写的
+
+<!-- BLOG-POST-LIST:START -->
+- [2025 Blog 的使用引导](https://odin-saga.vercel.app/blog/readme) · 2025-11-16
+<!-- BLOG-POST-LIST:END -->
+
+[继续阅读 Odin Saga →](https://odin-saga.vercel.app/)
+
+<br>
+
+<picture>
+  <source media="(max-width: 600px) and (prefers-color-scheme: light)" srcset="./assets/footer-light-mobile.svg">
+  <source media="(max-width: 600px)" srcset="./assets/footer-dark-mobile.svg">
+  <source media="(prefers-color-scheme: light)" srcset="./assets/footer-light.svg">
+  <img src="./assets/footer-dark.svg" width="100%" alt="Good tools should be shared. 把工具做好，把过程开源。">
+</picture>
+
+<details>
+<summary><sub>Colophon · 关于这个页面</sub></summary>
+
+<br>
+
+- **视觉**：原创三叶结金属网格、透视 GPU 示意与自托管 SVG。首屏 GIF 与静态 SVG 来自同一套几何和光照计算，不依赖外部动图服务。
+- **适配**：深浅主题、独立手机端构图，以及 `prefers-reduced-motion` 静态回退。
+- **作品画面**：来自本人公开站点的真实截图，拍摄于 **2026-11-04**，不是实时数据面板。
+- **图标**：[Simple Icons](https://simpleicons.org/) 的 CC0 路径，品牌商标归各自权利人。
+- **镜头参考**：吸收 [video-shotcraft](https://github.com/Vincentwei1021/video-shotcraft) 的分层景深、单主体聚光与稳定构图思路；这里的画面和实现均为本仓库原创。
+- **生成与维护**：[构建说明](./DESIGN.md) · [视觉生成器](./scripts/build_assets.py) · [数据生成器](./scripts/generate_stats.py)。
 
 </details>

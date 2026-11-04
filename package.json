@@ -1,0 +1,15 @@
+{
+  "name": "kael-odin-profile-artwork",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Optional offline rasterization tools for the self-hosted profile artwork",
+  "scripts": {
+    "render:boards": "node scripts/render_readme.cjs",
+    "build:preview": "node scripts/preview_readme.cjs"
+  },
+  "devDependencies": {
+    "@resvg/resvg-js": "2.6.2",
+    "github-markdown-css": "5.9.0",
+    "marked": "18.1.3"
+  }
+}

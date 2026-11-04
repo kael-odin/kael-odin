@@ -1,635 +1,319 @@
 #!/usr/bin/env python3
-"""Author the hand-built SVG art for the kael-odin profile README.
+"""Build the profile's original, self-contained vector artwork.
 
-Everything here is drawn from scratch (no capsule-render / no third-party
-widget service) and emitted as self-contained SVG: no external fonts, no
-scripts, no remote references. That is what lets the images be committed to
-the repo and served straight off raw.githubusercontent.
+A projected metallic trefoil is the identity, not a stock illustration. Its
+geometry, surface normals and lighting are computed here. Static SVGs work
+without JavaScript; render_readme.cjs optionally renders the same scene as GIF.
 
-Run:  python scripts/build_assets.py [--out assets]
+python scripts/build_assets.py --out assets
 """
-
 from __future__ import annotations
 
 import argparse
+import json
 import math
-import os
+from html import escape
+from pathlib import Path
 
-WIDE = 1280
-FONT = "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace"
-
+ROOT = Path(__file__).resolve().parents[1]
+FONT = "Arial, 'Segoe UI', 'Noto Sans', sans-serif"
+HAN = "'Microsoft YaHei', 'Noto Sans SC', sans-serif"
+MONO = "Consolas, 'Liberation Mono', monospace"
 THEMES = {
     "dark": {
-        "bg0": "#05070d", "bg1": "#0a1020",
-        "panel": "#0b1220", "panel2": "#0e1830",
-        "border": "#16223a", "ink": "#e6f1ff", "muted": "#7a8ba3", "dim": "#3c4a63",
-        "grid": "#12233d", "rule": "#16223a",
-        "c1": "#00ffe5", "c2": "#7b2ff7", "c3": "#ff2e97", "amber": "#ffb020",
-        "glow": True,
+        "bg": "#111315", "panel": "#191c1f", "ink": "#f3eee6",
+        "muted": "#aaa69f", "dim": "#767b7d", "line": "#373b3d",
+        "copper": "#e8b983", "blue": "#9baec4", "shadow": "#07090b",
     },
     "light": {
-        "bg0": "#ffffff", "bg1": "#eef3fb",
-        "panel": "#ffffff", "panel2": "#f4f7fc",
-        "border": "#d9e2f0", "ink": "#0b1020", "muted": "#5a6b85", "dim": "#9aa8bf",
-        "grid": "#dce6f5", "rule": "#d9e2f0",
-        "c1": "#009e8e", "c2": "#6236c9", "c3": "#d4247a", "amber": "#b57300",
-        "glow": False,
+        "bg": "#f5f2ec", "panel": "#ede9e1", "ink": "#242423",
+        "muted": "#666761", "dim": "#74756f", "line": "#d2cec4",
+        "copper": "#986232", "blue": "#536b85", "shadow": "#c2b7a8",
     },
 }
 
 
-def head(w: int, h: int, t: dict, extra_defs: str = "", css: str = "") -> str:
-    return f"""<svg xmlns="http://www.w3.org/2000/svg" width="{w}" height="{h}" viewBox="0 0 {w} {h}" role="img">
-<style>
-  text {{ font-family: {FONT}; }}
-  .mono {{ font-family: {FONT}; }}
-  .pulse {{ animation: pulse 4.5s linear infinite; }}
-  .blink {{ animation: blink 1.15s steps(1,end) infinite; }}
-  .breathe {{ animation: breathe 5s ease-in-out infinite; }}
-  @keyframes pulse {{ from {{ transform: translateX(0); }} to {{ transform: translateX({w + 260}px); }} }}
-  @keyframes blink {{ 0%, 49% {{ opacity: 1; }} 50%, 100% {{ opacity: 0; }} }}
-  @keyframes breathe {{ 0%, 100% {{ opacity: .45; }} 50% {{ opacity: 1; }} }}
-  {css}
-</style>
-<defs>{extra_defs}</defs>
-"""
+def text(x, y, value, size=24, fill="#f3eee6", weight=400, font=FONT, **attrs):
+    attr = " ".join(f'{k.replace("_", "-")}="{escape(str(v), quote=True)}"' for k, v in attrs.items())
+    return (f'<text x="{x}" y="{y}" font-family="{font}" font-size="{size}" '
+            f'font-weight="{weight}" fill="{fill}" {attr}>{escape(value)}</text>')
 
 
-def glow_filter(t: dict, std: float = 3.0) -> str:
-    # color-interpolation-filters="sRGB" is required or linearRGB flattens
-    # the neon palette toward white.
-    return (
-        f'<filter id="glow" x="-50%" y="-50%" width="200%" height="200%" '
-        f'color-interpolation-filters="sRGB">'
-        f'<feGaussianBlur stdDeviation="{std}" result="b"/>'
-        f'<feMerge><feMergeNode in="b"/><feMergeNode in="b"/>'
-        f'<feMergeNode in="SourceGraphic"/></feMerge></filter>'
-    )
+def line(x1, y1, x2, y2, color, opacity=1):
+    return (f'<path d="M{x1} {y1}H{x2}" stroke="{color}" opacity="{opacity}"/>'
+            if y1 == y2 else
+            f'<path d="M{x1} {y1}L{x2} {y2}" stroke="{color}" opacity="{opacity}"/>')
 
 
-def grid_rect(w: int, h: int, t: dict, cell: int = 64, opacity: float = 0.55, scroll: bool = True) -> str:
-    anim = (
-        f'<animateTransform attributeName="transform" type="translate" '
-        f'from="0 0" to="0 {cell}" dur="7s" repeatCount="indefinite"/>'
-        if scroll
-        else ""
-    )
-    return (
-        f'<pattern id="grid" width="{cell}" height="{cell}" patternUnits="userSpaceOnUse">'
-        f'<path d="M {cell} 0 L 0 0 0 {cell}" fill="none" stroke="{t["grid"]}" stroke-width="1"/>'
-        f"</pattern>"
-        f'<rect x="-{cell}" y="-{cell}" width="{w + cell * 2}" height="{h + cell * 2}" '
-        f'fill="url(#grid)" opacity="{opacity}">{anim}</rect>'
-    )
+def document(w, h, t, title, body, defs="", css=""):
+    return (f'<svg xmlns="http://www.w3.org/2000/svg" width="{w}" height="{h}" '
+            f'viewBox="0 0 {w} {h}" role="img" aria-labelledby="title desc">\n'
+            f'<title id="title">{escape(title)}</title>\n'
+            f'<desc id="desc">{escape(title)}. Original artwork for Kael Odin.</desc>\n'
+            f'<defs>{defs}<clipPath id="canvas"><rect width="{w}" height="{h}" rx="22"/></clipPath></defs>\n'
+            f'<style>text{{text-rendering:geometricPrecision}} {css}'
+            '@media(prefers-reduced-motion:reduce){*{animation:none!important}}</style>\n'
+            f'<g clip-path="url(#canvas)"><rect width="{w}" height="{h}" fill="{t["bg"]}"/>'
+            f'{body}</g></svg>\n')
 
 
-def brackets(w: int, h: int, t: dict, pad: int = 26, size: int = 22) -> str:
-    c = t["c1"]
-    d = [
-        f"M {pad} {pad + size} L {pad} {pad} L {pad + size} {pad}",
-        f"M {w - pad - size} {pad} L {w - pad} {pad} L {w - pad} {pad + size}",
-        f"M {pad} {h - pad - size} L {pad} {h - pad} L {pad + size} {h - pad}",
-        f"M {w - pad - size} {h - pad} L {w - pad} {h - pad} L {w - pad} {h - pad - size}",
-    ]
-    return "".join(
-        f'<path d="{p}" fill="none" stroke="{c}" stroke-width="2" stroke-opacity=".55"/>' for p in d
-    )
+def normalized(a):
+    length = math.sqrt(sum(v * v for v in a))
+    return tuple(v / length for v in a)
 
 
-def status(w: int, h: int, t: dict, label: str = "ONLINE", left: str = "// PROFILE") -> str:
-    return (
-        f'<text x="56" y="56" font-size="12" font-weight="600" fill="{t["muted"]}" '
-        f'letter-spacing="3.4">{left}</text>'
-        f'<circle cx="{w - 138}" cy="52" r="3.5" fill="{t["c1"]}" class="blink"/>'
-        f'<text x="{w - 56}" y="56" font-size="12" font-weight="600" fill="{t["c1"]}" '
-        f'letter-spacing="3" text-anchor="end">{label}</text>'
-    )
+def cross(a, b):
+    return (a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0])
 
 
-# ---------------------------------------------------------------------------
-# Hero
-# ---------------------------------------------------------------------------
+def center(u):
+    r = 2 + .66 * math.cos(3 * u)
+    return (r * math.cos(2 * u), r * math.sin(2 * u), .86 * math.sin(3 * u))
 
 
-def hero(t: dict) -> str:
-    """Mission-control hero: glitch-draw wordmark over a synthwave grid floor,
-    telemetry ring and HUD readouts — same palette and type as every other
-    asset on the page. Pure declarative SVG (CSS/SMIL, no scripts), safe to
-    serve from raw.githubusercontent inside <img>/<picture>."""
-    w, h = WIDE, 420
-    dark = t["glow"]
-    go = ".5" if dark else ".26"          # resting RGB-fringe opacity
-    burst = ".9" if dark else ".55"       # glitch burst peak opacity
-    aur1 = ".15" if dark else ".09"       # purple aurora wash
-    aur2 = ".11" if dark else ".07"       # cyan aurora wash
-    ray_o = ".22" if dark else ".30"
-    ring_cx, ring_cy = 1128.0, 190.0
+def rotate(p, phase):
+    x, y, z = p
+    ax, ay, az = .84 + .08 * math.cos(phase), .22 + .42 * math.sin(phase), -.28
+    y, z = y * math.cos(ax) - z * math.sin(ax), y * math.sin(ax) + z * math.cos(ax)
+    x, z = x * math.cos(ay) + z * math.sin(ay), -x * math.sin(ay) + z * math.cos(ay)
+    return (x * math.cos(az) - y * math.sin(az), x * math.sin(az) + y * math.cos(az), z)
 
-    circ66 = 2 * math.pi * 66
-    trace = "M 350 250 H 556 L 568 242 H 712 L 724 250 H 930"
-    glow_attr = ' filter="url(#glow)"' if dark else ""
 
-    ticks = " ".join(
-        f"M {ring_cx + 74 * math.cos(math.radians(k * 30)):.1f} "
-        f"{ring_cy + 74 * math.sin(math.radians(k * 30)):.1f} L "
-        f"{ring_cx + 80 * math.cos(math.radians(k * 30)):.1f} "
-        f"{ring_cy + 80 * math.sin(math.radians(k * 30)):.1f}"
-        for k in range(12)
-    )
-    hex_out = " ".join(
-        f"{ring_cx + 32 * math.cos(math.radians(-90 + 60 * k)):.1f},"
-        f"{ring_cy + 32 * math.sin(math.radians(-90 + 60 * k)):.1f}"
-        for k in range(6)
-    )
-    hex_in = " ".join(
-        f"{ring_cx + 24 * math.cos(math.radians(-90 + 60 * k)):.1f},"
-        f"{ring_cy + 24 * math.sin(math.radians(-90 + 60 * k)):.1f}"
-        for k in range(6)
-    )
+def sculpture(cx, cy, scale, phase=0):
+    """Painter-sorted tube mesh, with directional and specular copper lighting."""
+    around, sides = 128, 16
+    light = normalized((-.4, -.7, 1.4))
+    points, normals = [], []
+    for i in range(around):
+        u = i / around * math.tau
+        c, nxt = center(u), center(u + .001)
+        tangent = normalized(tuple(nxt[k] - c[k] for k in range(3)))
+        normal = normalized(cross(tangent, (0, 0, 1)))
+        bitangent = cross(tangent, normal)
+        ring, nr = [], []
+        for j in range(sides):
+            v = j / sides * math.tau
+            n = tuple(normal[k] * math.cos(v) + bitangent[k] * math.sin(v) for k in range(3))
+            ring.append(rotate(tuple(c[k] + .29 * n[k] for k in range(3)), phase))
+            nr.append(rotate(n, phase))
+        points.append(ring)
+        normals.append(nr)
+    faces = []
+    for i in range(around):
+        for j in range(sides):
+            corners = [(i, j), ((i + 1) % around, j), ((i + 1) % around, (j + 1) % sides), (i, (j + 1) % sides)]
+            ps = [points[a][b] for a, b in corners]
+            n = normalized(tuple(sum(normals[a][b][k] for a, b in corners) / 4 for k in range(3)))
+            diffuse = max(0, sum(n[k] * light[k] for k in range(3)))
+            half = normalized((light[0], light[1], light[2] + 1))
+            specular = max(0, sum(n[k] * half[k] for k in range(3))) ** 28
+            shade = min(1, .14 + .64 * diffuse + .6 * specular)
+            rgb = tuple(round(a + (b - a) * shade) for a, b in zip((42, 31, 25), (255, 222, 181)))
+            color = '#' + ''.join(f'{c:02x}' for c in rgb)
+            coords = ' '.join(f'{cx + x * scale:.2f},{cy + y * scale:.2f}' for x, y, _ in ps)
+            faces.append((sum(p[2] for p in ps), f'<polygon points="{coords}" fill="{color}" stroke="{color}" stroke-width=".38" stroke-linejoin="round"/>'))
+    return ''.join(svg for _, svg in sorted(faces))
 
-    defs = (
-        f'<linearGradient id="bgG" x1="0" y1="0" x2="0" y2="1">'
-        f'<stop stop-color="{t["bg0"]}"/><stop offset="100%" stop-color="{t["bg1"]}"/></linearGradient>'
-        f'<radialGradient id="aur1"><stop stop-color="{t["c2"]}" stop-opacity=".9"/>'
-        f'<stop offset="100%" stop-color="{t["c2"]}" stop-opacity="0"/></radialGradient>'
-        f'<radialGradient id="aur2"><stop stop-color="{t["c1"]}" stop-opacity=".9"/>'
-        f'<stop offset="100%" stop-color="{t["c1"]}" stop-opacity="0"/></radialGradient>'
-        f'<radialGradient id="clear"><stop stop-color="{t["bg0"]}" stop-opacity=".6"/>'
-        f'<stop offset="100%" stop-color="{t["bg0"]}" stop-opacity="0"/></radialGradient>'
-        f'<linearGradient id="nameGrad" x1="0" y1="0" x2="1" y2="0">'
-        f'<stop stop-color="{t["c1"]}"/><stop offset=".52" stop-color="{t["c2"]}"/>'
-        f'<stop offset="100%" stop-color="{t["c3"]}"/></linearGradient>'
-        f'<linearGradient id="scanG" x1="0" y1="0" x2="0" y2="1">'
-        f'<stop stop-color="{t["c1"]}" stop-opacity="0"/>'
-        f'<stop offset=".5" stop-color="{t["c1"]}" stop-opacity=".12"/>'
-        f'<stop offset="100%" stop-color="{t["c1"]}" stop-opacity="0"/></linearGradient>'
-        f'<linearGradient id="hzG" x1="0" y1="0" x2="0" y2="1">'
-        f'<stop stop-color="{t["c1"]}" stop-opacity=".38"/>'
-        f'<stop offset="100%" stop-color="{t["c1"]}" stop-opacity="0"/></linearGradient>'
-        f'<clipPath id="floorClip"><rect x="0" y="352" width="{w}" height="{h - 352}"/></clipPath>'
-    )
-    if dark:
-        defs += glow_filter(t, 3.2)
 
-    css = f"""
-      .han {{ font-family: 'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', sans-serif; }}
-      .gl-a {{ animation: glz-a 7.3s steps(1,end) infinite; }}
-      .gl-b {{ animation: glz-b 7.3s steps(1,end) infinite; }}
-      @keyframes glz-a {{ 0%,90.9% {{ transform: translate(0,0); opacity: {go}; }}
-        91.4% {{ transform: translate(-8px,3px); opacity: {burst}; }}
-        92.6% {{ transform: translate(6px,-2px); opacity: .55; }}
-        93.8% {{ transform: translate(-4px,1px); opacity: {burst}; }}
-        94.6%,100% {{ transform: translate(0,0); opacity: {go}; }} }}
-      @keyframes glz-b {{ 0%,44.9% {{ transform: translate(0,0); opacity: {go}; }}
-        45.4% {{ transform: translate(7px,-3px); opacity: {burst}; }}
-        46.6% {{ transform: translate(-5px,2px); opacity: .5; }}
-        47.8% {{ transform: translate(3px,-1px); opacity: {burst}; }}
-        48.6%,100% {{ transform: translate(0,0); opacity: {go}; }} }}
-      .name-line {{ animation: nDraw 1.7s cubic-bezier(.25,.6,.2,1) .15s backwards; }}
-      @keyframes nDraw {{ from {{ stroke-dashoffset: 660; }} }}
-      .trace {{ animation: tDraw 1.1s cubic-bezier(.3,.7,.2,1) 2.15s backwards; }}
-      @keyframes tDraw {{ from {{ stroke-dashoffset: 600; }} }}
-      .cdot {{ offset-path: path('{trace}'); offset-rotate: 0deg;
-               animation: cdot 5.6s cubic-bezier(.45,.05,.55,.95) 3.2s infinite; }}
-      @keyframes cdot {{ 0% {{ offset-distance: 0%; opacity: 0; }} 10% {{ opacity: 1; }}
-        88% {{ opacity: 1; }} 100% {{ offset-distance: 100%; opacity: 0; }} }}
-      .orb-a {{ animation: spin 46s linear infinite; }}
-      .orb-b {{ animation: spinR 30s linear infinite; }}
-      @keyframes spin {{ to {{ transform: rotate(360deg); }} }}
-      @keyframes spinR {{ to {{ transform: rotate(-360deg); }} }}
-      .arc {{ animation: arcSweep 7s linear infinite; }}
-      @keyframes arcSweep {{ to {{ stroke-dashoffset: -{circ66:.1f}; }} }}
-      .ray {{ animation: rayFlow 5.5s linear infinite; }}
-      @keyframes rayFlow {{ to {{ stroke-dashoffset: -130; }} }}
-      .tw {{ animation: twinkle 4.6s ease-in-out infinite; }}
-      @keyframes twinkle {{ 0%,100% {{ opacity: .5; }} 50% {{ opacity: .06; }} }}
-      .scan {{ animation: scanMove 9s linear infinite 2.6s backwards; }}
-      @keyframes scanMove {{ from {{ transform: translateY(0); }} to {{ transform: translateY(580px); }} }}
-      .drift-a {{ animation: drift 19s ease-in-out infinite alternate; }}
-      .drift-b {{ animation: drift 24s ease-in-out infinite alternate-reverse; }}
-      @keyframes drift {{ from {{ transform: translate(0,0); }} to {{ transform: translate(26px,14px); }} }}
-      @media (prefers-reduced-motion: reduce) {{ * {{ animation: none !important; }} }}
-    """
+def hero(t, mobile=False, phase=0):
+    w, h = (720, 920) if mobile else (1200, 620)
+    cx, cy, scale = (370, 674, 85) if mobile else (913, 305, 83)
+    title_size = 128 if mobile else 138
+    defs = (f'<radialGradient id="ambient"><stop stop-color="{t["copper"]}" stop-opacity=".17"/>'
+            '<stop offset="1" stop-color="#e8b983" stop-opacity="0"/></radialGradient>'
+            '<filter id="soft"><feGaussianBlur stdDeviation="13"/></filter>')
+    b = [f'<ellipse cx="{cx}" cy="{cy}" rx="310" ry="300" fill="url(#ambient)"/>']
+    b.append(text(48, 53, 'K / O', 22, t['copper'], 700, MONO, letter_spacing=2))
+    b.append(text(w - 48, 52, 'ENGINEERING / IN THE OPEN', 14 if mobile else 16, t['muted'], font=MONO, text_anchor='end', letter_spacing=1.6))
+    b.append(line(48, 78, w - 48, 78, t['line']))
+    b.append(text(48, 131 if mobile else 144, 'FULL-STACK  /  SYSTEMS ENGINEER', 17 if mobile else 18, t['muted'], font=MONO, letter_spacing=1))
+    b.append(text(40, 261 if mobile else 290, 'KAEL', title_size, t['ink'], 900, letter_spacing=-7))
+    b.append(text(40, 387 if mobile else 420, 'ODIN.', title_size, t['copper'], 900, letter_spacing=-8))
+    b.append(text(48, 442 if mobile else 480, '把想法变成仓库。', 33 if mobile else 32, t['ink'], 500, HAN, letter_spacing=2))
+    if not mobile:
+        b.append(text(48, 514, 'LOCAL MODELS. USEFUL TOOLS. OPEN SOURCE.', 16, t['muted'], font=MONO))
+    # The orbit has a quiet rear half and a bright foreground arc.
+    b.append(f'<ellipse cx="{cx}" cy="{cy + 48}" rx="264" ry="103" fill="none" stroke="{t["line"]}" transform="rotate(-24 {cx} {cy + 48})"/>')
+    b.append(f'<ellipse cx="{cx}" cy="{cy + 151}" rx="142" ry="22" fill="{t["shadow"]}" opacity=".65" filter="url(#soft)"/>')
+    b.append(sculpture(cx, cy, scale, phase))
+    b.append(f'<path d="M{cx - 211} {cy + 164}Q{cx - 125} {cy + 205} {cx + 205} {cy - 22}" fill="none" stroke="{t["copper"]}" stroke-width="1.2" opacity=".55"/>')
+    b.append(f'<circle cx="{cx + 205}" cy="{cy - 22}" r="4" fill="{t["copper"]}"/>')
+    if not mobile:
+        b.append(text(708, 113, '01 / THE BUILDER’S KNOT', 14, t['muted'], font=MONO, letter_spacing=1))
+        b.append(text(1147, 514, 'IDEA → SYSTEM → REPOSITORY', 14, t['muted'], font=MONO, text_anchor='end'))
+    by = h - 58
+    b.append(line(48, by - 23, w - 48, by - 23, t['line']))
+    for x, s in zip((48, w * .39, w - 48), ('LOCAL INFERENCE', 'AGENT SYSTEMS', 'ZH-CN / I18N')):
+        b.append(text(x, by + 7, s, 15 if mobile else 17, t['muted'], font=MONO, text_anchor='end' if x == w - 48 else 'start'))
+    return document(w, h, t, 'Kael Odin — full-stack and systems engineer, local inference, agent tooling, Chinese localization', ''.join(b), defs)
 
-    out = [head(w, h, t, defs, css.strip())]
-    out.append("<title>Kael Odin — mission control</title>")
-    out.append(
-        "<desc>Neon HUD hero: the name KAEL ODIN assembles over a synthwave grid floor "
-        "with a telemetry ring, signal trace and scanline sweep, in a light or dark palette.</desc>"
-    )
-    out.append(f'<rect width="{w}" height="{h}" fill="url(#bgG)"/>')
 
-    # Ambient depth: aurora washes drifting on their own periods.
-    out.append(f'<g opacity="{aur1}" class="drift-a"><ellipse cx="240" cy="70" rx="430" ry="240" fill="url(#aur1)"/></g>')
-    out.append(f'<g opacity="{aur2}" class="drift-b"><ellipse cx="1050" cy="360" rx="470" ry="250" fill="url(#aur2)"/></g>')
+def focus(t, mobile=False):
+    w, h = (720, 500) if mobile else (1200, 286)
+    items = [('01', 'LOCAL INFERENCE', '本地推理与显存优化'), ('02', 'AGENT SYSTEMS', '把工具连接成工作流'), ('03', 'LOCALIZATION', '让好工具说中文'), ('04', 'DATA ENGINEERING', '从采集到结构化数据')]
+    b = []
+    for i, (n, label, detail) in enumerate(items):
+        x, y = (42 + (i % 2) * 338, 74 + (i // 2) * 220) if mobile else (40 + i * 296, 76)
+        b.append(text(x, y, n, 26, t['copper'], 400, MONO))
+        b.append(line(x, y + 28, x + (285 if mobile else 240), y + 28, t['line']))
+        b.append(text(x, y + 76, label, 21 if mobile else 20, t['ink'], 700, letter_spacing=.3))
+        b.append(text(x, y + 119, detail, 23 if mobile else 22, t['muted'], font=HAN))
+    return document(w, h, t, 'Focus: local inference, agent systems, localization and data engineering', ''.join(b))
 
-    # Fine grid — the same cell size the footer uses.
-    out.append(grid_rect(w, h, t, cell=64, opacity=0.55 if dark else 0.6, scroll=False))
 
-    stars = [
-        (61, 84, 1.1, .35, 0), (142, 61, .9, .3, 0), (214, 102, 1.3, 1, 0),
-        (305, 58, .8, .3, 0), (388, 88, 1.0, .3, 0), (502, 64, 1.2, 1, 2.1),
-        (612, 52, .9, .3, 0), (706, 74, 1.1, .3, 0), (818, 58, 1.3, 1, 3.0),
-        (902, 96, .9, .3, 0), (985, 60, 1.1, .3, 0), (1078, 86, 1.2, 1, .8),
-        (1196, 72, .9, .3, 0), (95, 168, 1.0, .3, 0), (1210, 150, 1.1, 1, 2.8),
-        (74, 262, 1.0, .3, 0), (1216, 258, 1.2, .3, 0), (132, 338, 1.1, 1, 1.7),
-        (286, 318, .9, .3, 0), (994, 320, 1.0, .3, 0), (1122, 342, 1.2, 1, 3.6),
-        (452, 342, .9, .3, 0), (768, 334, 1.0, .3, 0), (640, 44, 1.1, .3, 0),
-    ]
-    for x, y, r, op, delay in stars:
-        if delay:
-            out.append(
-                f'<circle class="tw" style="animation-delay:{delay}s" cx="{x}" cy="{y}" '
-                f'r="{r}" fill="{t["c1"]}"/>'
-            )
+def readable_brand(hex_color, t):
+    def luminance(rgb):
+        values = [v / 255 for v in rgb]
+        linear = [v / 12.92 if v <= .04045 else ((v + .055) / 1.055) ** 2.4 for v in values]
+        return sum(v * k for v, k in zip(linear, (.2126, .7152, .0722)))
+    rgb = [int(hex_color[k:k + 2], 16) for k in (0, 2, 4)]
+    bg = luminance([int(t['bg'][k:k + 2], 16) for k in (1, 3, 5)])
+    target = [int(t['ink'][k:k + 2], 16) for k in (1, 3, 5)]
+    for _ in range(25):
+        value = luminance(rgb)
+        if (max(value, bg) + .05) / (min(value, bg) + .05) >= 3:
+            break
+        rgb = [round(v + (goal - v) * .18) for v, goal in zip(rgb, target)]
+    return '#' + ''.join(f'{v:02x}' for v in rgb)
+
+
+def toolkit(t, mobile=False):
+    icons = json.loads((ROOT / 'assets/readme/source/brand-icons.json').read_text(encoding='utf-8'))
+    w, h = (720, 694) if mobile else (1200, 358)
+    b = []
+    groups = ['CODE / RUNTIMES', 'BUILD / DELIVERY', 'INFRASTRUCTURE / DATA']
+    for i, icon in enumerate(icons):
+        if mobile:
+            x, y = 40 + (i % 3) * 230, 65 + (i // 3) * 104
+            size = 34
         else:
-            out.append(f'<circle cx="{x}" cy="{y}" r="{r}" fill="{t["ink"]}" opacity="{op}"/>')
-
-    # Keep the centre readable over the grid.
-    out.append('<ellipse cx="640" cy="225" rx="440" ry="195" fill="url(#clear)"/>')
-
-    # Synthwave floor: static horizontals + rays with energy flowing outward.
-    out.append('<g clip-path="url(#floorClip)" fill="none">')
-    for y, op in ((358, .16), (366, .22), (377, .3), (392, .4), (410, .5)):
-        out.append(f'<line x1="0" y1="{y}" x2="{w}" y2="{y}" stroke="{t["grid"]}" stroke-width="1" stroke-opacity="{op}"/>')
-    for i in range(-4, 5):
-        out.append(
-            f'<path class="ray" style="animation-delay:{-i * .45:.2f}s" d="M 640 352 L {640 + i * 190} 436" '
-            f'stroke="{t["c1"]}" stroke-width="1" stroke-opacity="{ray_o}" stroke-dasharray="4 9"/>'
-        )
-    out.append("</g>")
-    out.append(f'<rect x="0" y="346" width="{w}" height="12" fill="url(#hzG)"/>')
-    out.append(
-        f'<line x1="0" y1="352" x2="{w}" y2="352" stroke="{t["c1"]}" stroke-width="1.3" '
-        f'stroke-opacity=".5"{glow_attr}/>'
-    )
-
-    # Left flank: telemetry rows with meters that fill in.
-    for j, (label, val, p, accent) in enumerate(
-        (("LOCAL LLM", "22G VRAM", .86, t["c1"]),
-         ("AGENT OPS", "TOOLING", .62, t["c2"]),
-         ("I18N MIRRORS", "ZH-CN", .74, t["c3"]))
-    ):
-        ry = 172 + j * 44
-        out.append(f'<text x="64" y="{ry - 8}" font-size="12" fill="{t["dim"]}" letter-spacing="2">{label}</text>')
-        out.append(f'<text x="214" y="{ry - 8}" font-size="12" fill="{t["muted"]}" text-anchor="end">{val}</text>')
-        out.append(f'<rect x="64" y="{ry}" width="150" height="3" rx="1.5" fill="{t["border"]}"/>')
-        out.append(
-            f'<rect x="64" y="{ry}" width="{150 * p:.0f}" height="3" rx="1.5" fill="{accent}"/>'
-        )
-
-    # Right flank: telemetry ring around the 造 core.
-    out.append('<g class="orb-a" style="transform-origin:%.0fpx %.0fpx">' % (ring_cx, ring_cy))
-    out.append(
-        f'<circle cx="{ring_cx}" cy="{ring_cy}" r="84" fill="none" stroke="{t["muted"]}" '
-        f'stroke-opacity=".45" stroke-width="1" stroke-dasharray="2 7"/>'
-    )
-    for dx, dy in ((0, -84), (84, 0), (0, 84), (-84, 0)):
-        out.append(
-            f'<rect x="{ring_cx + dx - 3:.0f}" y="{ring_cy + dy - 3:.0f}" width="6" height="6" '
-            f'fill="{t["c1"]}" opacity=".7"/>'
-        )
-    out.append("</g>")
-    out.append(f'<path d="{ticks}" stroke="{t["dim"]}" stroke-width="1.2" fill="none" opacity=".8"/>')
-    arc_end_x = ring_cx + 66 * math.sin(math.radians(120))
-    arc_end_y = ring_cy - 66 * math.cos(math.radians(120))
-    out.append(
-        f'<path class="arc" d="M {ring_cx:.0f} {ring_cy - 66:.0f} A 66 66 0 0 1 {arc_end_x:.1f} {arc_end_y:.1f}" '
-        f'fill="none" stroke="{t["c3"]}" stroke-width="2" stroke-linecap="round" '
-        f'stroke-dasharray="{circ66 / 3:.1f} {2 * circ66 / 3:.1f}"/>'
-    )
-    out.append('<g class="orb-b" style="transform-origin:%.0fpx %.0fpx">' % (ring_cx, ring_cy))
-    out.append(
-        f'<circle cx="{ring_cx}" cy="{ring_cy}" r="56" fill="none" stroke="{t["c1"]}" '
-        f'stroke-opacity=".55" stroke-width="1.4" stroke-dasharray="34 14"/>'
-    )
-    out.append("</g>")
-    out.append(
-        f'<polygon points="{hex_out}" fill="{t["panel"]}" fill-opacity=".94" '
-        f'stroke="{t["c1"]}" stroke-width="1.5"{glow_attr}/>'
-    )
-    out.append(
-        f'<polygon class="breathe" points="{hex_in}" fill="none" stroke="{t["border"]}" '
-        f'stroke-width="1" stroke-dasharray="3 4"/>'
-    )
-    out.append(
-        f'<text x="{ring_cx:.0f}" y="{ring_cy + 9:.0f}" text-anchor="middle" class="han" '
-        f'font-size="26" font-weight="700" fill="{t["ink"]}">造</text>'
-    )
-    out.append(
-        f'<text x="{ring_cx:.0f}" y="296" text-anchor="middle" font-size="12" fill="{t["muted"]}" '
-        f'letter-spacing="2.4">SYS.CORE // ONLINE</text>'
-    )
-
-    # Top HUD row.
-    out.append(f'<text x="64" y="56" font-size="15" fill="{t["muted"]}" letter-spacing=".3">~/kael-odin · main</text>')
-    out.append(f'<circle cx="1062" cy="51.5" r="3.5" fill="{t["c1"]}" class="blink"/>')
-    out.append(
-        f'<text x="{w - 56}" y="56" text-anchor="end" font-size="12.5" fill="{t["c1"]}" '
-        f'letter-spacing="3">SYSTEMS ONLINE</text>'
-    )
-
-    # Kicker: shell prompt with a blinking block cursor.
-    out.append(f'<path d="M 520 113 H 594 M 686 113 H 760" stroke="{t["rule"]}" stroke-width="1"/>')
-    out.append(
-        f'<text x="640" y="118" text-anchor="middle" font-size="16" letter-spacing="1.2" '
-        f'fill="{t["c1"]}">$ whoami</text>'
-    )
-    out.append(f'<rect x="690" y="104" width="9" height="17" fill="{t["c1"]}" class="blink"/>')
-
-    # The wordmark: RGB-fringed ghosts plus a permanent gradient fill; the
-    # outline traces itself around the finished letters like a plasma rim.
-    # Motion only ever ADDS — the resting state must be the complete artwork,
-    # because static renderers (social cards, scrapers) never run the clock.
-    name_attrs = 'x="640" y="224" text-anchor="middle" font-size="96" font-weight="700" letter-spacing="6"'
-    out.append(f'<g transform="translate(-2.5 0)"><text class="gl-a" {name_attrs} fill="{t["c3"]}" opacity="{go}">KAEL ODIN</text></g>')
-    out.append(f'<g transform="translate(2.5 0)"><text class="gl-b" {name_attrs} fill="{t["c1"]}" opacity="{go}">KAEL ODIN</text></g>')
-    out.append(
-        f'<text class="name-line" {name_attrs} fill="none" stroke="{t["c1"]}" stroke-width="1.3" '
-        f'opacity=".6" stroke-dasharray="660 660">KAEL ODIN</text>'
-    )
-    out.append(
-        f'<text {name_attrs} fill="url(#nameGrad)"{glow_attr}>KAEL ODIN</text>'
-    )
-
-    # Signal trace under the name: draws itself, then a pulse keeps commuting.
-    out.append(f'<path d="{trace}" fill="none" stroke="{t["rule"]}" stroke-width="1.2"/>')
-    out.append(
-        f'<path class="trace" d="{trace}" fill="none" stroke="{t["c1"]}" stroke-width="2" '
-        f'stroke-linecap="round" stroke-dasharray="600 600"/>'
-    )
-    for nx in (350, 930):
-        out.append(f'<circle cx="{nx}" cy="250" r="3" fill="{t["c1"]}"/>')
-    out.append(f'<circle class="cdot" cx="350" cy="250" r="3.5" fill="{t["c1"]}"/>')
-
-    out.append(
-        f'<text x="640" y="296" text-anchor="middle" class="han" '
-        f'font-size="23" fill="{t["ink"]}">把复杂的问题，做成简单可用的工具</text>'
-    )
-    out.append(
-        f'<text x="640" y="324" text-anchor="middle" '
-        f'font-size="13" fill="{t["muted"]}" letter-spacing="3">SYSTEMS ENGINEERING · LOCAL MODELS · AGENT TOOLING · I18N</text>'
-    )
-
-    # CRT scanline sweep parked off-canvas at rest.
-    out.append('<g class="scan"><rect x="-40" y="-130" width="1360" height="90" fill="url(#scanG)"/></g>')
-
-    out.append(brackets(w, h, t))
-    out.append("</svg>\n")
-    return "".join(out)
+            row, col = i // 6, i % 6
+            x, y, size = 235 + col * 158, 69 + row * 110, 30
+            if col == 0:
+                b.append(text(32, y + 4, groups[row].split(' / ')[0], 16, t['muted'], font=MONO))
+                b.append(text(32, y + 28, '/ ' + groups[row].split(' / ')[1], 16, t['muted'], font=MONO))
+                if row < 2:
+                    b.append(line(32, y + 60, w - 32, y + 60, t['line']))
+        color = readable_brand(icon['hex'], t)
+        b.append(f'<g transform="translate({x} {y - 23}) scale({size / 24})"><path d="{icon["path"]}" fill="{color}"/></g>')
+        b.append(text(x + size + 12 if mobile else x, y + 3 if mobile else y + 42, icon['title'], 24 if mobile else 19, t['ink']))
+    return document(w, h, t, 'Tools: TypeScript, Python, Go, C++, JavaScript, Node.js, React, Vue, Vite, FastAPI, Docker, Linux, Git, Nginx, Redis, PostgreSQL, MySQL, Cloudflare', ''.join(b))
 
 
-# ---------------------------------------------------------------------------
-# Terminal
-# ---------------------------------------------------------------------------
+def footer(t, mobile=False):
+    w, h = (720, 314) if mobile else (1200, 230)
+    b = [line(42, 38, w - 42, 38, t['line'])]
+    b.append(text(42, 105, 'GOOD TOOLS.', 54 if mobile else 56, t['ink'], 800, letter_spacing=-2))
+    b.append(text(42, 171, 'SHOULD BE SHARED.', 49 if mobile else 56, t['copper'], 800, letter_spacing=-2))
+    if not mobile:
+        b.append(text(w - 42, 102, 'KAEL ODIN', 22, t['ink'], 700, MONO, text_anchor='end'))
+        b.append(text(w - 42, 141, 'KEEP BUILDING ↗', 17, t['muted'], font=MONO, text_anchor='end'))
+    b.append(text(42, h - 25, '把工具做好，把过程开源。', 24, t['muted'], font=HAN))
+    return document(w, h, t, 'Good tools should be shared. Kael Odin — keep building.', ''.join(b))
 
 
-def terminal(t: dict) -> str:
-    w, h = 940, 314
-    top = 42
-    defs = (
-        f'<linearGradient id="termBg" x1="0" y1="0" x2="0" y2="1">'
-        f'<stop offset="0%" stop-color="{t["panel"]}"/>'
-        f'<stop offset="100%" stop-color="{t["bg0"]}"/></linearGradient>'
-    )
-
-    # (text, colour, indent, is_command)
-    lines = [
-        ("$ whoami", t["c1"], 0, True),
-        ("Kael Odin  ·  full-stack / systems  ·  @Thordata", t["ink"], 0, False),
-        ("", t["muted"], 0, False),
-        ("$ ls ~/projects --sort=stars", t["c1"], 0, True),
-        ("awesome-academic-research-skills", t["ink"], 2, False),
-        ("openworker", t["ink"], 2, False),
-        ("kv-streaming-2080ti-22G", t["ink"], 2, False),
-    ]
-    stars = ["76", "27", "3"]
-
-    out = [head(w, h, t, defs, css="@keyframes type { from { transform: scaleX(0); } to { transform: scaleX(1); } }")]
-    out.append(
-        f'<rect x="0.5" y="0.5" width="{w - 1}" height="{h - 1}" rx="13" fill="url(#termBg)" '
-        f'stroke="{t["border"]}" stroke-width="1"/>'
-    )
-    out.append(
-        f'<path d="M 0.5 43 L 0.5 13 A 13 13 0 0 1 13.5 0.5 L {w - 13.5} 0.5 '
-        f'A 13 13 0 0 1 {w - 0.5} 13 L {w - 0.5} 43 Z" fill="{t["panel2"]}"/>'
-    )
-    out.append(f'<line x1="0.5" y1="43" x2="{w - 0.5}" y2="43" stroke="{t["border"]}" stroke-width="1"/>')
-
-    for i, colour in enumerate(["#ff5f57", "#febc2e", "#28c840"]):
-        out.append(f'<circle cx="{26 + i * 21}" cy="22" r="6.5" fill="{colour}"/>')
-    out.append(
-        f'<text x="{w / 2}" y="27" font-size="12.5" fill="{t["muted"]}" letter-spacing="1.6" '
-        f'text-anchor="middle">kael@github — zsh</text>'
-    )
-
-    # Lines wipe in left-to-right via a scaleX'd clip rect rather than an
-    # animated width. The rect's *resting* transform is scaleX(1) so a viewer
-    # whose renderer never runs the animation still sees the full text;
-    # animation-fill-mode:both hides it only during the stagger delay.
-    y = 72
-    star_row = 0
-    for i, (text, colour, indent, is_cmd) in enumerate(lines):
-        if not text:
-            y += 16
-            continue
-        x = 28 + indent * 16
-        wipe_w = len(text) * 9.0 + 40
-        delay = 0.30 + i * 0.32
-        dur = min(0.55, max(0.22, len(text) * 0.018))
-        cid = f"type{i}"
-        out.append(
-            f'<clipPath id="{cid}" clipPathUnits="userSpaceOnUse">'
-            f'<rect x="{x}" y="{y - 19}" width="{wipe_w:.0f}" height="26" '
-            f'style="transform-origin:{x}px 0;'
-            f'animation:type {dur:.2f}s steps({max(6, len(text))},end) {delay:.2f}s both"/>'
-            f"</clipPath>"
-        )
-        out.append(f'<g clip-path="url(#{cid})">')
-        out.append(
-            f'<text x="{x}" y="{y}" font-size="14.5" fill="{colour}" '
-            f'letter-spacing="0.2">{text.replace("&", "&amp;").replace("<", "&lt;")}</text>'
-        )
-        out.append("</g>")
-
-        # The star count is right-aligned, well outside the line's wipe rect,
-        # so it needs its own clip — otherwise the typing animation eats it.
-        if text in ("awesome-academic-research-skills", "openworker", "kv-streaming-2080ti-22G"):
-            sx, sw = w - 34, 90
-            sid = f"star{i}"
-            out.append(
-                f'<clipPath id="{sid}" clipPathUnits="userSpaceOnUse">'
-                f'<rect x="{sx - sw}" y="{y - 19}" width="{sw}" height="26" '
-                f'style="transform-origin:{sx - sw}px 0;'
-                f'animation:type 0.18s steps(8,end) {delay + 0.16:.2f}s both"/>'
-                f"</clipPath>"
-            )
-            out.append(f'<g clip-path="url(#{sid})">')
-            out.append(
-                f'<text x="{sx}" y="{y}" font-size="14" fill="{t["amber"]}" '
-                f'text-anchor="end">★ {stars[star_row]}</text>'
-            )
-            out.append("</g>")
-            star_row += 1
-        y += 30 if is_cmd else 26
-
-    # Prompt with a blinking block cursor
-    out.append(f'<text x="28" y="{y + 12}" font-size="14.5" fill="{t["c1"]}">$</text>')
-    out.append(
-        f'<rect class="blink" x="48" y="{y}" width="9" height="16" fill="{t["c1"]}"/>'
-    )
-
-    out.append("</svg>\n")
-    return "".join(out)
+def terminal(t):
+    b = [text(48, 57, '$ whoami', 22, t['copper'], font=MONO),
+         text(48, 137, 'kael-odin', 66, t['ink'], 700),
+         text(48, 193, 'Full-stack / systems engineer at Thordata', 26, t['muted']),
+         line(640, 40, 640, 210, t['line'])]
+    for i, s in enumerate(['local inference', 'agent tooling', 'Chinese localization']):
+        b.append(text(690, 70 + i * 61, f'0{i + 1}  {s}', 25, t['ink'], font=MONO))
+    return document(1200, 250, t, 'Kael Odin — engineer at Thordata', ''.join(b))
 
 
-# ---------------------------------------------------------------------------
-# Divider / footer
-# ---------------------------------------------------------------------------
+def divider(t):
+    return document(1200, 18, t, 'Section divider', line(0, 9, 1200, 9, t['line']))
 
 
-def divider(t: dict) -> str:
-    w, h = WIDE, 10
-    defs = (
-        f'<linearGradient id="pulseGrad" x1="0" y1="0" x2="1" y2="0">'
-        f'<stop offset="0%" stop-color="{t["c1"]}" stop-opacity="0"/>'
-        f'<stop offset="50%" stop-color="{t["c1"]}" stop-opacity="1"/>'
-        f'<stop offset="100%" stop-color="{t["c1"]}" stop-opacity="0"/></linearGradient>'
-    )
-    return (
-        head(w, h, t, defs)
-        + f'<line x1="0" y1="5" x2="{w}" y2="5" stroke="{t["rule"]}" stroke-width="1"/>'
-        + f'<rect class="pulse" x="-260" y="3.5" width="260" height="3" rx="1.5" '
-        f'fill="url(#pulseGrad)"/>'
-        + "</svg>\n"
-    )
-
-
-def footer(t: dict) -> str:
-    w, h = WIDE, 156
-    defs = (
-        f'<linearGradient id="wordGrad" x1="0" y1="0" x2="1" y2="0">'
-        f'<stop offset="0%" stop-color="{t["c1"]}"/>'
-        f'<stop offset="50%" stop-color="{t["c2"]}"/>'
-        f'<stop offset="100%" stop-color="{t["c3"]}"/></linearGradient>'
-        f'<linearGradient id="pulseGrad" x1="0" y1="0" x2="1" y2="0">'
-        f'<stop offset="0%" stop-color="{t["c3"]}" stop-opacity="0"/>'
-        f'<stop offset="50%" stop-color="{t["c3"]}" stop-opacity="1"/>'
-        f'<stop offset="100%" stop-color="{t["c3"]}" stop-opacity="0"/></linearGradient>'
-    )
-    out = [head(w, h, t, defs)]
-    out.append(grid_rect(w, h, t, cell=48, opacity=0.3 if t["glow"] else 0.45))
-    out.append(f'<line x1="0" y1="8" x2="{w}" y2="8" stroke="{t["rule"]}" stroke-width="1"/>')
-    out.append(
-        f'<text x="{w / 2}" y="72" font-size="30" font-weight="700" letter-spacing="14" '
-        f'fill="url(#wordGrad)" text-anchor="middle">KAEL ODIN</text>'
-    )
-    out.append(
-        f'<text x="{w / 2}" y="102" font-size="12" fill="{t["muted"]}" letter-spacing="4.6" '
-        f'text-anchor="middle">TURNING IDEAS INTO REPOSITORIES</text>'
-    )
-    out.append(f'<line x1="0" y1="132" x2="{w}" y2="132" stroke="{t["rule"]}" stroke-width="1"/>')
-    out.append(
-        f'<rect class="pulse" x="-260" y="130.5" width="260" height="3" rx="1.5" '
-        f'fill="url(#pulseGrad)"/>'
-    )
-    out.append("</svg>\n")
-    return "".join(out)
-
-
-# ---------------------------------------------------------------------------
-# Focus panels
-# ---------------------------------------------------------------------------
-
-PANELS = [
-    ("01", "LOCAL LLM", "本地推理 / 量化", "RTX 2080 Ti 22G · KV streaming"),
-    ("02", "AGENT TOOLING", "智能体工作台", "protocol reverse · plugin · orchestration"),
-    ("03", "I18N & MIRRORS", "中文本地化", "docs & product mirrors for zh-CN"),
-    ("04", "DATA PIPELINES", "采集与清洗", "scraping · structuring · proxies"),
+PROJECTS = [
+    {'id': 'research', 'number': '01', 'category': 'RESEARCH / DISCOVERY',
+     'title': ['Academic', 'Research Skills'], 'zh': ['科研工具太多，', '先把值得用的找出来。'],
+     'tags': 'DAILY RANKING  /  AGENT SKILLS', 'capture': 'research.png',
+     'url': 'https://kael-odin.github.io/awesome-academic-research-skills/'},
+    {'id': 'plugins', 'number': '02', 'category': 'LOCALIZATION / TOOLING',
+     'title': ['Good tools.', 'In Chinese.'], 'zh': ['同步、汉化、验证，', '让插件市场真正可用。'],
+     'tags': 'CODEX  /  CLAUDE CODE  /  ZCODE', 'capture': 'plugins.png',
+     'url': 'https://kael-odin.github.io/codex-plugins-zh/'},
+    {'id': 'bifrost', 'number': '04', 'category': 'INTERFACES / PERSONAL SYSTEMS',
+     'title': ['The Odin', 'Collection.'], 'zh': ['主页、作品集与数字花园，', '给每一种表达一个空间。'],
+     'tags': 'BIFROST  /  VALHALLA  /  SAGA', 'capture': 'bifrost.png',
+     'url': 'https://kael-odin.github.io/odin-bifrost/'},
 ]
 
 
-def esc(text: str) -> str:
-    """Focus-panel copy contains '&' and would otherwise break XML parsing."""
-    return (
-        text.replace("&", "&amp;")
-        .replace("<", "&lt;")
-        .replace(">", "&gt;")
-        .replace('"', "&quot;")
-    )
+def project_card(t, p, mobile=False):
+    w, h = (720, 784) if mobile else (1200, 430)
+    sx, sy, sw, sh = (40, 345, 640, 382) if mobile else (604, 53, 572, 342)
+    image_path = '../captures/' + p['capture']
+    defs = f'<clipPath id="screen"><rect x="{sx}" y="{sy}" width="{sw}" height="{sh}" rx="10"/></clipPath>'
+    b = [text(40, 50, p['number'] + ' / ' + p['category'], 18 if mobile else 17, t['copper'], font=MONO)]
+    for i, s in enumerate(p['title']):
+        b.append(text(38, 124 + i * 64, s, 56 if mobile else 54, t['ink'], 700, letter_spacing=-2))
+    for i, s in enumerate(p['zh']):
+        b.append(text(42, 249 + i * 39, s, 28 if mobile else 26, t['muted'], font=HAN))
+    b.append(text(42, h - 21, p['tags'], 18 if mobile else 16, t['muted'], font=MONO))
+    b.append(f'<rect x="{sx - 9}" y="{sy - 14}" width="{sw + 18}" height="{sh + 25}" rx="15" fill="{t["panel"]}" stroke="{t["line"]}"/>')
+    b.append(f'<image href="{image_path}" x="{sx}" y="{sy}" width="{sw}" height="{sh}" preserveAspectRatio="xMidYMin slice" clip-path="url(#screen)"/>')
+    return document(w, h, t, 'Selected work ' + ' '.join(p['title']) + ' — actual live page screenshot captured 2026-11-04', ''.join(b), defs)
 
 
-def focus(t: dict) -> str:
-    w, h = WIDE, 232
-    pad, gap = 56, 20
-    pw = (w - pad * 2 - gap * 3) / 4
-    ph, py = 172, 30
-    accents = [t["c1"], t["c3"], t["c2"], t["c1"]]
-
-    out = [head(w, h, t)]
-    for i, (idx, title, zh, desc) in enumerate(PANELS):
-        x = pad + i * (pw + gap)
-        accent = accents[i]
-        out.append(
-            f'<rect x="{x:.0f}" y="{py}" width="{pw:.0f}" height="{ph}" rx="12" '
-            f'fill="{accent}" fill-opacity=".05" stroke="{t["border"]}" stroke-width="1"/>'
-        )
-        out.append(
-            f'<rect class="breathe" style="animation-delay:{i * 0.8:.1f}s" '
-            f'x="{x:.0f}" y="{py}" width="{pw:.0f}" height="3" rx="1.5" fill="{accent}"/>'
-        )
-        out.append(
-            f'<text x="{x + 20:.0f}" y="{py + 44}" font-size="15" font-weight="700" '
-            f'fill="{accent}" letter-spacing="2">{idx}</text>'
-        )
-        out.append(
-            f'<text x="{x + pw - 20:.0f}" y="{py + 44}" font-size="12" fill="{t["dim"]}" '
-            f'letter-spacing="1.6" text-anchor="end">{esc(zh)}</text>'
-        )
-        out.append(
-            f'<text x="{x + 20:.0f}" y="{py + 84}" font-size="19" font-weight="700" '
-            f'fill="{t["ink"]}" letter-spacing="1.4">{esc(title)}</text>'
-        )
-        out.append(
-            f'<line x1="{x + 20:.0f}" y1="{py + 102}" x2="{x + pw - 20:.0f}" y2="{py + 102}" '
-            f'stroke="{t["border"]}" stroke-width="1"/>'
-        )
-        out.append(
-            f'<text x="{x + 20:.0f}" y="{py + 128}" font-size="12.5" fill="{t["muted"]}" '
-            f'letter-spacing="0.4">{esc(desc)}</text>'
-        )
-        out.append(
-            f'<text x="{x + 20:.0f}" y="{py + 152}" font-size="11" fill="{t["dim"]}" '
-            f'letter-spacing="2.4">FOCUS AREA</text>'
-        )
-    out.append("</svg>\n")
-    return "".join(out)
+def gpu_card(t, mobile=False):
+    w, h = (720, 784) if mobile else (1200, 430)
+    b = [text(40, 50, '03 / LOCAL INFERENCE', 18 if mobile else 17, t['copper'], font=MONO)]
+    for i, s in enumerate(['Old silicon.', 'New limits.']):
+        b.append(text(38, 124 + i * 64, s, 56 if mobile else 54, t['ink'], 700, letter_spacing=-2))
+    for i, s in enumerate(['在 RTX 2080 Ti 22G 上，', '继续向长上下文推进。']):
+        b.append(text(42, 249 + i * 39, s, 28 if mobile else 26, t['muted'], font=HAN))
+    ox, oy = (360, 513) if mobile else (910, 209)
+    # A deliberately schematic GPU package: stacked planes, pins and a die.
+    b.append(f'<ellipse cx="{ox}" cy="{oy + 133}" rx="212" ry="29" fill="{t["shadow"]}" opacity=".5"/>')
+    points = [(-200, 0), (0, -98), (200, 0), (0, 98)]
+    for offset, fill in [(34, t['line']), (24, t['panel']), (0, t['panel'])]:
+        s = ' '.join(f'{ox + x},{oy + y + offset}' for x, y in points)
+        b.append(f'<polygon points="{s}" fill="{fill}" stroke="{t["line"]}"/>')
+    for i in range(12):
+        x, y = -167 + i * 13, 18 + i * 6.5
+        b.append(line(ox + x, oy + y, ox + x, oy + y + 25, t['copper'], .65))
+        b.append(line(ox - x, oy + y, ox - x, oy + y + 25, t['copper'], .65))
+    b.append(f'<polygon points="{ox - 115},{oy} {ox},{oy - 57} {ox + 115},{oy} {ox},{oy + 57}" fill="{t["copper"]}"/>')
+    b.append(text(ox, oy + 8, 'TU102 / 22G', 25, t['bg'], 700, MONO, text_anchor='middle'))
+    b.append(text(42 if mobile else 620, h - 57, '262K CONTEXT  /  36.6 TOK/S', 23 if mobile else 25, t['ink'], 600, MONO))
+    b.append(text(42, h - 21, 'KVMEM / QWEN3.8-27B · 项目记录实测，配置见仓库', 17 if mobile else 16, t['muted'], font=HAN))
+    return document(w, h, t, 'RTX 2080 Ti 22G KVMem project. Repository-reported 262K context and 36.6 tokens per second; see repository for exact configuration. GPU drawing is schematic.', ''.join(b))
 
 
-# ---------------------------------------------------------------------------
-
-BUILDERS = {
-    "hero": hero,
-    "terminal": terminal,
-    "divider": divider,
-    "focus": focus,
-    "footer": footer,
-}
-
-
-def main() -> None:
+def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--out", default="assets")
+    parser.add_argument('--out', default=str(ROOT / 'assets'))
+    parser.add_argument('--motion-frames', type=int, default=0)
+    parser.add_argument('--theme', choices=list(THEMES), default='dark')
+    parser.add_argument('--mobile', action='store_true')
     args = parser.parse_args()
-    os.makedirs(args.out, exist_ok=True)
+    out = Path(args.out)
+    out.mkdir(parents=True, exist_ok=True)
+    if args.motion_frames:
+        for i in range(args.motion_frames):
+            (out / f'{i:03}.svg').write_text(hero(THEMES[args.theme], args.mobile, i / args.motion_frames * math.tau), encoding='utf-8', newline='\n')
+        return
+    for theme, t in THEMES.items():
+        for name, builder in [('hero', hero), ('focus', focus), ('toolkit', toolkit), ('footer', footer)]:
+            for mobile in (False, True):
+                suffix = '-mobile' if mobile else ''
+                (out / f'{name}-{theme}{suffix}.svg').write_text(builder(t, mobile), encoding='utf-8', newline='\n')
+        for name, builder in [('terminal', terminal), ('divider', divider)]:
+            (out / f'{name}-{theme}.svg').write_text(builder(t), encoding='utf-8', newline='\n')
+        source = out / 'readme/source'
+        source.mkdir(parents=True, exist_ok=True)
+        for p in PROJECTS:
+            for mobile in (False, True):
+                suffix = '-mobile' if mobile else ''
+                (source / f'project-{p["id"]}-{theme}{suffix}.svg').write_text(project_card(t, p, mobile), encoding='utf-8', newline='\n')
+        for mobile in (False, True):
+            suffix = '-mobile' if mobile else ''
+            (out / f'project-gpu-{theme}{suffix}.svg').write_text(gpu_card(t, mobile), encoding='utf-8', newline='\n')
+    print('Built original artwork for both themes and mobile layouts.')
 
-    for theme_name, theme in THEMES.items():
-        for name, builder in BUILDERS.items():
-            path = os.path.join(args.out, f"{name}-{theme_name}.svg")
-            with open(path, "w", encoding="utf-8", newline="\n") as handle:
-                handle.write(builder(theme))
-            print(f"  wrote {path}")
 
-
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()

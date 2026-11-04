@@ -1,35 +1,27 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="860" height="214" viewBox="0 0 860 214" role="img">
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="280" viewBox="0 0 1200 280" role="img" aria-labelledby="stats-title stats-desc">
+  <title id="stats-title">GitHub activity</title>
+  <desc id="stats-desc">Stars earned: 281; Public repositories: 26; Followers: 14; Contributions / 12 mo: 1,844; Pull requests: 34; Issues opened: 6. An em dash means unavailable, not zero. Contributions cover the last 12 months.</desc>
   <style>
-    text { font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace; }
-    /* .val intentionally sets no fill: a CSS fill would beat the per-tile
-       fill="" presentation attribute in the cascade and flatten every accent. */
-    .val { font-size: 32px; font-weight: 700; }
-    .lbl { font-size: 10.5px; font-weight: 600; fill: #5a6b85; letter-spacing: 2.2px; }
-    .ttl { font-size: 12px; font-weight: 600; fill: #5a6b85; letter-spacing: 3px; }
-    .foot { font-size: 9.5px; fill: #a9b6cc; letter-spacing: 1px; }
-    .sweep { animation: sweep 9s linear infinite; }
-    .blink { animation: blink 2.4s ease-in-out infinite; }
-    @keyframes sweep {
-      0%   { transform: translateX(-260px); }
-      100% { transform: translateX(860px); }
-    }
-    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: .25; } }
+    text { font-family: 'Segoe UI', Helvetica, Arial, sans-serif; fill: #242423; }
+    .title { font-family: 'Iowan Old Style', 'Palatino Linotype', Georgia, serif; font-size: 26px; }
+    .meta { font-size: 20px; fill: #666761; }
+    .value { font-size: 68px; font-weight: 500; letter-spacing: -2px; }
+    .secondary { font-size: 64px; }
+    .label { font-size: 22px; fill: #666761; }
+    .language { font-size: 22px; }
+    .share { font-size: 32px; font-variant-numeric: tabular-nums; }
+    .empty { font-size: 32px; }
   </style>
-  <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#ffffff"/>
-      <stop offset="100%" stop-color="#f2f6fc"/>
-    </linearGradient>
-    <linearGradient id="scan" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0%" stop-color="#009e8e" stop-opacity="0"/>
-      <stop offset="50%" stop-color="#009e8e" stop-opacity=".55"/>
-      <stop offset="100%" stop-color="#009e8e" stop-opacity="0"/>
-    </linearGradient>
-    <clipPath id="card"><rect x="0" y="0" width="860" height="214" rx="14"/></clipPath>
-  </defs>
-  <g clip-path="url(#card)">
-    <rect width="860" height="214" fill="url(#bg)"/>
-  </g>
-  <rect x="0.5" y="0.5" width="859" height="213" rx="13.5" fill="none" stroke="#d9e2f0" stroke-width="1"/>
-  <rect class="sweep" y="0" width="260" height="1.5" fill="url(#scan)"/>
-<circle class="blink" cx="30" cy="29" r="3.5" fill="#009e8e"/><circle cx="30" cy="29" r="7" fill="none" stroke="#009e8e" stroke-opacity=".35"/><text class="ttl" x="46" y="33">// STATS</text><text class="foot" x="836" y="33" text-anchor="end">updated 2026-11-03 10:00 UTC</text><rect x="24.0" y="52" width="261.3" height="68" rx="10" fill="#009e8e" fill-opacity="0.045" stroke="#d9e2f0" stroke-width="1"/><rect x="36.0" y="66" width="3" height="40" rx="1.5" fill="#009e8e"/><text class="val" x="50.0" y="90" fill="#009e8e">278</text><text class="lbl" x="50.0" y="109">STARS</text><rect x="299.3" y="52" width="261.3" height="68" rx="10" fill="#d4247a" fill-opacity="0.045" stroke="#d9e2f0" stroke-width="1"/><rect x="311.3" y="66" width="3" height="40" rx="1.5" fill="#d4247a"/><text class="val" x="325.3" y="90" fill="#d4247a">26</text><text class="lbl" x="325.3" y="109">REPOS</text><rect x="574.7" y="52" width="261.3" height="68" rx="10" fill="#6236c9" fill-opacity="0.045" stroke="#d9e2f0" stroke-width="1"/><rect x="586.7" y="66" width="3" height="40" rx="1.5" fill="#6236c9"/><text class="val" x="600.7" y="90" fill="#6236c9">13</text><text class="lbl" x="600.7" y="109">FOLLOWERS</text><rect x="24.0" y="132" width="261.3" height="68" rx="10" fill="#0e7f96" fill-opacity="0.045" stroke="#d9e2f0" stroke-width="1"/><rect x="36.0" y="146" width="3" height="40" rx="1.5" fill="#0e7f96"/><text class="val" x="50.0" y="170" fill="#0e7f96">1,840</text><text class="lbl" x="50.0" y="189">CONTRIBUTIONS / 12MO</text><rect x="299.3" y="132" width="261.3" height="68" rx="10" fill="#b57300" fill-opacity="0.045" stroke="#d9e2f0" stroke-width="1"/><rect x="311.3" y="146" width="3" height="40" rx="1.5" fill="#b57300"/><text class="val" x="325.3" y="170" fill="#b57300">34</text><text class="lbl" x="325.3" y="189">PULL REQUESTS</text><rect x="574.7" y="132" width="261.3" height="68" rx="10" fill="#1f9254" fill-opacity="0.045" stroke="#d9e2f0" stroke-width="1"/><rect x="586.7" y="146" width="3" height="40" rx="1.5" fill="#1f9254"/><text class="val" x="600.7" y="170" fill="#1f9254">6</text><text class="lbl" x="600.7" y="189">ISSUES</text></svg>
+  <rect width="1200" height="280" fill="#f5f2ec"/>
+  <path d="M40 54.5H1160" fill="none" stroke="#536b85" stroke-opacity=".3"/>
+  <path d="M40 54.5H104" fill="none" stroke="#986232"/>
+  <text class="title" x="40" y="35">GitHub activity</text>
+<text class="meta" x="1160" y="35" text-anchor="end">Updated 2026-11-04 14:29 UTC</text>
+<path d="M40 175.5H1160" fill="none" stroke="#242423" stroke-opacity=".18"/>
+<g><title>Stars earned: 281</title><text class="value" x="40" y="125">281</text><text class="label" x="40" y="156">Stars earned</text></g>
+<g><title>Public repositories: 26</title><text class="value" x="424" y="125">26</text><text class="label" x="424" y="156">Public repositories</text></g>
+<g><title>Followers: 14</title><text class="value" x="808" y="125">14</text><text class="label" x="808" y="156">Followers</text></g>
+<g><title>Contributions / 12 mo: 1,844</title><text class="value secondary" x="40" y="237">1,844</text><text class="label" x="40" y="266">Contributions / 12 mo</text></g>
+<g><title>Pull requests: 34</title><text class="value secondary" x="424" y="237">34</text><text class="label" x="424" y="266">Pull requests</text></g>
+<g><title>Issues opened: 6</title><text class="value secondary" x="808" y="237">6</text><text class="label" x="808" y="266">Issues opened</text></g>
+</svg>

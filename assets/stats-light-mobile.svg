@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="570" viewBox="0 0 720 570" role="img" aria-labelledby="title desc">
+<title id="title">GitHub activity</title><desc id="desc">Stars earned: 281; Public repositories: 26; Followers: 14; Contributions / 12 mo: 1,844; Pull requests: 34; Issues opened: 6. An em dash means unavailable.</desc>
+<style>text{font-family:'Segoe UI', Helvetica, Arial, sans-serif;fill:#242423}.muted{fill:#666761}</style>
+<rect width="720" height="570" rx="22" fill="#f5f2ec"/>
+<text x="40" y="54" font-size="30">GitHub activity</text>
+<path d="M40 78H680" stroke="#536b85" stroke-opacity=".3"/>
+<text x="40" y="163" font-size="62">281</text><text x="40" y="202" font-size="25" class="muted">Stars earned</text><text x="374" y="163" font-size="62">26</text><text x="374" y="202" font-size="25" class="muted">Public repositories</text><text x="40" y="306" font-size="62">14</text><text x="40" y="345" font-size="25" class="muted">Followers</text><text x="374" y="306" font-size="62">1,844</text><text x="374" y="345" font-size="25" class="muted">Contributions / 12 mo</text><text x="40" y="449" font-size="62">34</text><text x="40" y="488" font-size="25" class="muted">Pull requests</text><text x="374" y="449" font-size="62">6</text><text x="374" y="488" font-size="25" class="muted">Issues opened</text><text x="40" y="540" font-size="21" class="muted">2026-11-04 14:29 UTC</text></svg>

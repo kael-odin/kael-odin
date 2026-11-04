@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="314" viewBox="0 0 720 314" role="img" aria-labelledby="title desc">
+<title id="title">Good tools should be shared. Kael Odin — keep building.</title>
+<desc id="desc">Good tools should be shared. Kael Odin — keep building.. Original artwork for Kael Odin.</desc>
+<defs><clipPath id="canvas"><rect width="720" height="314" rx="22"/></clipPath></defs>
+<style>text{text-rendering:geometricPrecision} @media(prefers-reduced-motion:reduce){*{animation:none!important}}</style>
+<g clip-path="url(#canvas)"><rect width="720" height="314" fill="#f5f2ec"/><path d="M42 38H678" stroke="#d2cec4" opacity="1"/><text x="42" y="105" font-family="Arial, 'Segoe UI', 'Noto Sans', sans-serif" font-size="54" font-weight="800" fill="#242423" letter-spacing="-2">GOOD TOOLS.</text><text x="42" y="171" font-family="Arial, 'Segoe UI', 'Noto Sans', sans-serif" font-size="49" font-weight="800" fill="#986232" letter-spacing="-2">SHOULD BE SHARED.</text><text x="42" y="289" font-family="'Microsoft YaHei', 'Noto Sans SC', sans-serif" font-size="24" font-weight="400" fill="#666761" >把工具做好，把过程开源。</text></g></svg>

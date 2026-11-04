@@ -1,35 +1,42 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="860" height="186" viewBox="0 0 860 186" role="img">
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="328" viewBox="0 0 1200 328" role="img" aria-labelledby="langs-title langs-desc">
+  <title id="langs-title">Repository languages</title>
+  <desc id="langs-desc">Measured public repo language bytes — not skill levels. Up to 40 of the largest public repositories are sampled; unavailable responses are excluded. Segments follow the language list in reading order. JavaScript: 18,521,992 bytes (33.3%); TypeScript: 14,037,119 bytes (25.2%); Python: 11,437,969 bytes (20.6%); Go: 7,346,122 bytes (13.2%); HTML: 1,415,140 bytes (2.5%); CSS: 976,597 bytes (1.8%); Other: 1,871,768 bytes (3.4%). Denominator: all 55,606,707 sampled bytes. Percentages are rounded.</desc>
   <style>
-    text { font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace; }
-    /* .val intentionally sets no fill: a CSS fill would beat the per-tile
-       fill="" presentation attribute in the cascade and flatten every accent. */
-    .val { font-size: 32px; font-weight: 700; }
-    .lbl { font-size: 10.5px; font-weight: 600; fill: #5a6b85; letter-spacing: 2.2px; }
-    .ttl { font-size: 12px; font-weight: 600; fill: #5a6b85; letter-spacing: 3px; }
-    .foot { font-size: 9.5px; fill: #a9b6cc; letter-spacing: 1px; }
-    .sweep { animation: sweep 9s linear infinite; }
-    .blink { animation: blink 2.4s ease-in-out infinite; }
-    @keyframes sweep {
-      0%   { transform: translateX(-260px); }
-      100% { transform: translateX(860px); }
-    }
-    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: .25; } }
+    text { font-family: 'Segoe UI', Helvetica, Arial, sans-serif; fill: #242423; }
+    .title { font-family: 'Iowan Old Style', 'Palatino Linotype', Georgia, serif; font-size: 26px; }
+    .meta { font-size: 20px; fill: #666761; }
+    .value { font-size: 68px; font-weight: 500; letter-spacing: -2px; }
+    .secondary { font-size: 64px; }
+    .label { font-size: 22px; fill: #666761; }
+    .language { font-size: 22px; }
+    .share { font-size: 32px; font-variant-numeric: tabular-nums; }
+    .empty { font-size: 32px; }
   </style>
-  <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#ffffff"/>
-      <stop offset="100%" stop-color="#f2f6fc"/>
-    </linearGradient>
-    <linearGradient id="scan" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0%" stop-color="#009e8e" stop-opacity="0"/>
-      <stop offset="50%" stop-color="#009e8e" stop-opacity=".55"/>
-      <stop offset="100%" stop-color="#009e8e" stop-opacity="0"/>
-    </linearGradient>
-    <clipPath id="card"><rect x="0" y="0" width="860" height="186" rx="14"/></clipPath>
-  </defs>
-  <g clip-path="url(#card)">
-    <rect width="860" height="186" fill="url(#bg)"/>
-  </g>
-  <rect x="0.5" y="0.5" width="859" height="185" rx="13.5" fill="none" stroke="#d9e2f0" stroke-width="1"/>
-  <rect class="sweep" y="0" width="260" height="1.5" fill="url(#scan)"/>
-<circle class="blink" cx="30" cy="29" r="3.5" fill="#009e8e"/><circle cx="30" cy="29" r="7" fill="none" stroke="#009e8e" stroke-opacity=".35"/><text class="ttl" x="46" y="33">// LANGUAGES</text><clipPath id="bar"><rect x="24" y="50" width="812" height="16" rx="8"/></clipPath><g clip-path="url(#bar)"><rect x="24.00" y="50" width="269.85" height="16" fill="#009e8e"/><rect x="293.85" y="50" width="205.21" height="16" fill="#d4247a"/><rect x="499.06" y="50" width="167.21" height="16" fill="#6236c9"/><rect x="666.28" y="50" width="107.39" height="16" fill="#0e7f96"/><rect x="773.67" y="50" width="20.69" height="16" fill="#b57300"/><rect x="794.36" y="50" width="14.28" height="16" fill="#1f9254"/><rect x="808.64" y="50" width="12.16" height="16" fill="#c93b3b"/><rect x="820.79" y="50" width="15.21" height="16" fill="#4356b8"/></g><rect x="24" y="50" width="812" height="16" rx="8" fill="none" stroke="#d9e2f0" stroke-width="1"/><rect x="24.0" y="91" width="10" height="10" rx="3" fill="#009e8e"/><text x="42.0" y="100" font-size="12" fill="#0b1020">JavaScript</text><text x="42.0" y="114" font-size="10" fill="#5a6b85">33.2%</text><rect x="227.0" y="91" width="10" height="10" rx="3" fill="#d4247a"/><text x="245.0" y="100" font-size="12" fill="#0b1020">TypeScript</text><text x="245.0" y="114" font-size="10" fill="#5a6b85">25.3%</text><rect x="430.0" y="91" width="10" height="10" rx="3" fill="#6236c9"/><text x="448.0" y="100" font-size="12" fill="#0b1020">Python</text><text x="448.0" y="114" font-size="10" fill="#5a6b85">20.6%</text><rect x="633.0" y="91" width="10" height="10" rx="3" fill="#0e7f96"/><text x="651.0" y="100" font-size="12" fill="#0b1020">Go</text><text x="651.0" y="114" font-size="10" fill="#5a6b85">13.2%</text><rect x="24.0" y="123" width="10" height="10" rx="3" fill="#b57300"/><text x="42.0" y="132" font-size="12" fill="#0b1020">HTML</text><text x="42.0" y="146" font-size="10" fill="#5a6b85">2.5%</text><rect x="227.0" y="123" width="10" height="10" rx="3" fill="#1f9254"/><text x="245.0" y="132" font-size="12" fill="#0b1020">CSS</text><text x="245.0" y="146" font-size="10" fill="#5a6b85">1.8%</text><rect x="430.0" y="123" width="10" height="10" rx="3" fill="#c93b3b"/><text x="448.0" y="132" font-size="12" fill="#0b1020">Vue</text><text x="448.0" y="146" font-size="10" fill="#5a6b85">1.5%</text><rect x="633.0" y="123" width="10" height="10" rx="3" fill="#4356b8"/><text x="651.0" y="132" font-size="12" fill="#0b1020">Shell</text><text x="651.0" y="146" font-size="10" fill="#5a6b85">0.7%</text><text class="foot" x="836" y="174" text-anchor="end">23 languages · 55.54 MB of code indexed</text></svg>
+  <rect width="1200" height="328" fill="#f5f2ec"/>
+  <path d="M40 54.5H1160" fill="none" stroke="#536b85" stroke-opacity=".3"/>
+  <path d="M40 54.5H104" fill="none" stroke="#986232"/>
+  <text class="title" x="40" y="35">Repository languages</text>
+<text class="meta" x="40" y="79">Measured public repo language bytes — not skill levels.</text>
+<text class="meta" x="1160" y="35" text-anchor="end">23 languages · public repo sample</text>
+<rect class="language-segment" x="40.000000" y="99" width="373.059873" height="14" fill="#986232" data-bytes="18521992"><title>JavaScript: 18,521,992 bytes · 33.3%</title></rect>
+<rect class="language-segment" x="413.059873" y="99" width="282.728004" height="14" fill="#986232" data-bytes="14037119"><title>TypeScript: 14,037,119 bytes · 25.2%</title></rect>
+<rect class="language-segment" x="695.787877" y="99" width="230.377341" height="14" fill="#986232" data-bytes="11437969"><title>Python: 11,437,969 bytes · 20.6%</title></rect>
+<rect class="language-segment" x="926.165217" y="99" width="147.961587" height="14" fill="#986232" data-bytes="7346122"><title>Go: 7,346,122 bytes · 13.2%</title></rect>
+<rect class="language-segment" x="1074.126805" y="99" width="28.502979" height="14" fill="#986232" data-bytes="1415140"><title>HTML: 1,415,140 bytes · 2.5%</title></rect>
+<rect class="language-segment" x="1102.629784" y="99" width="19.670085" height="14" fill="#986232" data-bytes="976597"><title>CSS: 976,597 bytes · 1.8%</title></rect>
+<rect class="language-segment" x="1122.299869" y="99" width="37.700131" height="14" fill="#986232" data-bytes="1871768"><title>Other: 1,871,768 bytes · 3.4%</title></rect>
+<path d="M413.059873 99v14" stroke="#f5f2ec" stroke-width="2"/>
+<path d="M695.787877 99v14" stroke="#f5f2ec" stroke-width="2"/>
+<path d="M926.165217 99v14" stroke="#f5f2ec" stroke-width="2"/>
+<path d="M1074.126805 99v14" stroke="#f5f2ec" stroke-width="2"/>
+<path d="M1102.629784 99v14" stroke="#f5f2ec" stroke-width="2"/>
+<path d="M1122.299869 99v14" stroke="#f5f2ec" stroke-width="2"/>
+<g><title>JavaScript: 18,521,992 of 55,606,707 sampled bytes</title><text class="language" x="40" y="149">JavaScript</text><text class="share" x="40" y="183">33.3%</text></g>
+<g><title>TypeScript: 14,037,119 of 55,606,707 sampled bytes</title><text class="language" x="328" y="149">TypeScript</text><text class="share" x="328" y="183">25.2%</text></g>
+<g><title>Python: 11,437,969 of 55,606,707 sampled bytes</title><text class="language" x="616" y="149">Python</text><text class="share" x="616" y="183">20.6%</text></g>
+<g><title>Go: 7,346,122 of 55,606,707 sampled bytes</title><text class="language" x="904" y="149">Go</text><text class="share" x="904" y="183">13.2%</text></g>
+<g><title>HTML: 1,415,140 of 55,606,707 sampled bytes</title><text class="language" x="40" y="233">HTML</text><text class="share" x="40" y="267">2.5%</text></g>
+<g><title>CSS: 976,597 of 55,606,707 sampled bytes</title><text class="language" x="328" y="233">CSS</text><text class="share" x="328" y="267">1.8%</text></g>
+<g><title>Other: 1,871,768 of 55,606,707 sampled bytes</title><text class="language" x="616" y="233">Other</text><text class="share" x="616" y="267">3.4%</text></g>
+<text class="meta" x="40" y="309">55,606,707 bytes measured · segments follow the list, left to right</text>
+</svg>

@@ -10,6 +10,8 @@ on:
     # job's own commit would re-trigger it forever.
     paths:
       - "scripts/generate_stats.py"
+      - "scripts/build_assets.py"
+      - "tests/**"
       - ".github/workflows/stats.yml"
 
 permissions:
@@ -24,6 +26,9 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+
+      - name: Verify generators
+        run: python -I -B -m unittest discover -s tests -v
 
       - name: Render stat + language cards
         env:
