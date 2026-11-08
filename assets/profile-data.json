@@ -1,7 +1,7 @@
 {
-  "contributions": 1873,
+  "contributions": null,
   "followers": 15,
-  "generated": "2026-11-07 09:12 UTC",
+  "generated": "2026-11-08 09:26 UTC",
   "issues": 6,
   "languages": {
     "Astro": 79269,
@@ -12,8 +12,8 @@
     "Go": 7346122,
     "Go Template": 53039,
     "HCL": 53144,
-    "HTML": 1440463,
-    "JavaScript": 18592944,
+    "HTML": 1440464,
+    "JavaScript": 18617318,
     "Liquid": 30753,
     "NSIS": 13489,
     "PLpgSQL": 81902,
@@ -31,6 +31,6 @@
   "prs": 34,
   "repos": 27,
   "schema_version": 1,
-  "stars": 288,
+  "stars": 289,
   "user": "kael-odin"
 }
