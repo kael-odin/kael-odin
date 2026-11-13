@@ -1,7 +1,7 @@
 {
-  "contributions": 1961,
-  "followers": 14,
-  "generated": "2026-11-12 10:14 UTC",
+  "contributions": 2011,
+  "followers": 13,
+  "generated": "2026-11-13 09:56 UTC",
   "issues": 6,
   "languages": {
     "Astro": 79269,
@@ -13,15 +13,15 @@
     "Go": 7346122,
     "Go Template": 53039,
     "HCL": 53144,
-    "HTML": 1569827,
-    "JavaScript": 19881298,
+    "HTML": 1569804,
+    "JavaScript": 20000028,
     "Liquid": 30753,
     "Makefile": 1381,
     "NSIS": 13489,
     "PLpgSQL": 84926,
     "Perl": 6200,
     "PowerShell": 13829,
-    "Python": 12804303,
+    "Python": 13127793,
     "R": 28377,
     "Rust": 620086,
     "Shell": 388971,
@@ -34,6 +34,6 @@
   "prs": 34,
   "repos": 30,
   "schema_version": 1,
-  "stars": 302,
+  "stars": 306,
   "user": "kael-odin"
 }
