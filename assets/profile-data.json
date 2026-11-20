@@ -1,7 +1,7 @@
 {
-  "contributions": 2177,
+  "contributions": 2181,
   "followers": 13,
-  "generated": "2026-11-19 10:44 UTC",
+  "generated": "2026-11-20 10:26 UTC",
   "issues": 6,
   "languages": {
     "Astro": 79269,
@@ -13,7 +13,7 @@
     "Go": 7346122,
     "Go Template": 53039,
     "HCL": 53144,
-    "HTML": 1569601,
+    "HTML": 1569833,
     "JavaScript": 20351916,
     "Liquid": 30753,
     "Makefile": 1381,
@@ -27,13 +27,13 @@
     "Shell": 390855,
     "Standard ML": 174952,
     "Swift": 16821,
-    "TypeScript": 19607857,
+    "TypeScript": 19613628,
     "Vue": 835049,
     "WGSL": 6953
   },
   "prs": 34,
   "repos": 30,
   "schema_version": 1,
-  "stars": 326,
+  "stars": 328,
   "user": "kael-odin"
 }
