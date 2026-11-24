@@ -1,7 +1,7 @@
 {
-  "contributions": 2196,
-  "followers": 14,
-  "generated": "2026-11-23 11:13 UTC",
+  "contributions": 2198,
+  "followers": 13,
+  "generated": "2026-11-24 12:54 UTC",
   "issues": 6,
   "languages": {
     "Astro": 79269,
@@ -27,13 +27,13 @@
     "Shell": 394358,
     "Standard ML": 174952,
     "Swift": 16821,
-    "TypeScript": 20667209,
+    "TypeScript": 20669945,
     "Vue": 835049,
     "WGSL": 6953
   },
   "prs": 34,
   "repos": 30,
   "schema_version": 1,
-  "stars": 335,
+  "stars": 342,
   "user": "kael-odin"
 }
